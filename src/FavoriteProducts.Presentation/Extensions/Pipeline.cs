@@ -31,16 +31,14 @@ public static class Pipeline
 
     public static WebApplication SeedDatabaseIfDevelopment(this WebApplication app)
     {
-        if (app.Environment.IsDevelopment())
-        {
-            using var scope = app.Services.CreateScope();
-            var services = scope.ServiceProvider;
+        if (!app.Environment.IsDevelopment()) return app;
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
 
-            services
-                .GetRequiredService<DatabaseSeed>()
-                .SeedAsync()
-                .Wait();
-        }
+        services
+            .GetRequiredService<DatabaseSeed>()
+            .SeedAsync()
+            .Wait();
 
         return app;
     }

@@ -17,5 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 await builder
     .Build()
     .UsePipeline()
+    .ApplyMigration()
     .SeedDatabaseIfDevelopment()
     .RunAsync();
