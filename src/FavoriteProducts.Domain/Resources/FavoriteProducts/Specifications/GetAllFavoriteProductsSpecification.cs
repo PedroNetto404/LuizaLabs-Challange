@@ -4,11 +4,12 @@ using FavoriteProducts.Domain.Extensions;
 
 namespace FavoriteProducts.Domain.Resources.FavoriteProducts.Specifications;
 
-public class GetAllFavoriteProductsSpecification : Specification<FavoriteProduct>
+public sealed class GetAllFavoriteProductsSpecification : Specification<FavoriteProduct>
 {
-    public GetAllFavoriteProductsSpecification(Guid customerId, int page, int pageSize)
+    public GetAllFavoriteProductsSpecification(
+        Guid customerId, int page, int pageSize)
     {
-        Query.Paginate(page, pageSize);
-        Query.Where(x => x.CustomerId == customerId);
+        Query.Where(p => p.CustomerId == customerId)
+             .Paginate(page, pageSize); 
     }
 }
