@@ -62,7 +62,10 @@ public sealed class FavoriteProductDomainService(
             return DomainErrors.FavoriteProduct.CannotFavoriteInactiveProduct;
         }
 
-        var favoriteProduct = new FavoriteProduct(customer.Id, product.Id);
+        var favoriteProduct = new FavoriteProduct(
+            customer.Id, 
+            product.Id,
+            product.Title.Value);
 
         await favoriteProductRepository.AddAsync(favoriteProduct);
         return await unitOfWork.CommitAsync(cancellationToken) is true 
