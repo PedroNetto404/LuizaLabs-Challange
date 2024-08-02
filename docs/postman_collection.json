@@ -1,0 +1,361 @@
+{
+	"info": {
+		"_postman_id": "6cc7365b-e555-49fd-a282-70b08ec69336",
+		"name": "Favorite Products",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23144549"
+	},
+	"item": [
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "Favorite Products",
+					"item": [
+						{
+							"name": "GetAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/customers/2c2613d4-2f75-4f91-9d2b-ca1f95b546a9/favorite-products?page=1&page_size=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"customers",
+										"2c2613d4-2f75-4f91-9d2b-ca1f95b546a9",
+										"favorite-products"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "page_size",
+											"value": "10"
+										},
+										{
+											"key": "sort_by",
+											"value": "Name",
+											"disabled": true
+										},
+										{
+											"key": "sort_order",
+											"value": "Desc",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Favorite",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/customers/325308cb-0a4c-4eb0-92eb-5ff1e64b3a8f/favorite-products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"customers",
+										"325308cb-0a4c-4eb0-92eb-5ff1e64b3a8f",
+										"favorite-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/customers/325308cb-0a4c-4eb0-92eb-5ff1e64b3a8f/favorite-products/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"customers",
+										"325308cb-0a4c-4eb0-92eb-5ff1e64b3a8f",
+										"favorite-products",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/customers/325308cb-0a4c-4eb0-92eb-5ff1e64b3a8f/favorite-products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"customers",
+										"325308cb-0a4c-4eb0-92eb-5ff1e64b3a8f",
+										"favorite-products"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"Pedro Netto\",\n    \"email\" : \"pedronetto31415@gmail.com\"\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/customers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/customers/e9319511-1c11-4c44-a86a-6600361d5b47",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"customers",
+								"e9319511-1c11-4c44-a86a-6600361d5b47"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/customers?page=1&page_size=10&sort_by=Email&sort_order=Desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"customers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "10"
+								},
+								{
+									"key": "sort_by",
+									"value": "Email"
+								},
+								{
+									"key": "sort_order",
+									"value": "Desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"Pedro\",\n    \"email\" : \"xpto@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/customers/e9319511-1c11-4c44-a86a-6600361d5b47",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"customers",
+								"e9319511-1c11-4c44-a86a-6600361d5b47"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/customers/e9319511-1c11-4c44-a86a-6600361d5b47",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"customers",
+								"e9319511-1c11-4c44-a86a-6600361d5b47"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Cafeteira Elétrica\",\n    \"brand\": \"br1233333333132321and\",\n    \"description\": \"Cafete312321321312ira que faz café\",\n    \"price\": 50,\n    \"image_url\": \"xptpw321321321peqpwp\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?page=1&page_size=10&sort_by=Name&sort_order=Desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "10"
+								},
+								{
+									"key": "sort_by",
+									"value": "Name"
+								},
+								{
+									"key": "sort_order",
+									"value": "Desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/9f939a62-52c0-4cbd-bf41-b13135d3568b",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"9f939a62-52c0-4cbd-bf41-b13135d3568b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"XPTO\",\n    \"description\": \"The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality\",\n    \"price\": 632.29,\n    \"brand\": \"Hodkiewicz - Fadel\",\n    \"image_url\": \"https://arvel.biz\",\n    \"active\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/029cdcce-ad5b-4fd6-9047-1677393c1345",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"029cdcce-ad5b-4fd6-9047-1677393c1345"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
