@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using FavoriteProducts.Presentation.Handlers;
+using Microsoft.OpenApi.Models;
 
 namespace FavoriteProducts.Presentation.Extensions;
 
@@ -8,6 +9,7 @@ internal static class DependencyInjection
     {
         container.AddControllers();
         container.AddSwagger();
+        container.AddExceptionHandler<GlobalExceptionHandler>();
 
         return container;
     }
@@ -16,11 +18,13 @@ internal static class DependencyInjection
     {
         container.AddSwaggerGen(c =>
         {
+            c.EnableAnnotations();
+            
             c.SwaggerDoc(
                 "v1",
                 new OpenApiInfo
                 {
-                    Title = "Desafio Técnico Magulo - Gerenciamento de Produtos Favoritos",
+                    Title = "Desafio Técnico LuizaLabs - Gerenciamento de Produtos Favoritos",
                     Description = "RESTFull API para gerenciamento de produtos favoritos",
                     Version = "v1",
                     Contact = new OpenApiContact()
