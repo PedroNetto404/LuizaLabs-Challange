@@ -1,4 +1,5 @@
 using System.Reflection;
+using Bogus;
 using FavoriteProducts.Domain.Resources.Customers;
 using FavoriteProducts.Domain.Resources.Customers.ValueObjects;
 
@@ -6,8 +7,9 @@ namespace FavoriteProducts.UnitTests.Builders;
 
 public sealed class CustomerBuilder
 {
-    private CustomerName _name = CustomerName.Create("Pedro Netto").Value;
-    private Email _email = Email.Create("pedronetto31415@gmail.com").Value;
+    private static readonly Faker _faker = new();
+    private CustomerName _name = CustomerName.Create(_faker.Name.FullName()).Value;
+    private Email _email = Email.Create(_faker.Internet.Email()).Value;
 
     public CustomerBuilder WithName(CustomerName name)
     {

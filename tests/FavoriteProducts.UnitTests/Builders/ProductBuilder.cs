@@ -1,4 +1,4 @@
-﻿using FavoriteProducts.Domain;
+﻿using Bogus;
 using FavoriteProducts.Domain.Resources.Products;
 using FavoriteProducts.Domain.Resources.Products.ValueObjects;
 
@@ -6,11 +6,12 @@ namespace FavoriteProducts.UnitTests.Builders;
 
 public sealed class ProductBuilder
 {
-    private ProductTitle _title = ProductTitle.Create("Smartphone").Value;
-    private ProductDescription _description = ProductDescription.Create("Anything").Value;
-    private ProductPrice _price = ProductPrice.Create(1000.00m).Value;
-    private ProductBrand _brand = ProductBrand.Create("Samsung").Value;
-    private string _imageUrl = "http://image.com";
+    private static readonly Faker _faker = new();
+    private ProductTitle _title = ProductTitle.Create(_faker.Commerce.ProductName()).Value;
+    private ProductDescription _description = ProductDescription.Create(_faker.Commerce.ProductDescription()).Value;
+    private ProductPrice _price = ProductPrice.Create(_faker.Finance.Amount()).Value;
+    private ProductBrand _brand = ProductBrand.Create(_faker.Company.CompanyName()).Value;
+    private string _imageUrl = _faker.Image.PicsumUrl();
     private bool _active = true;
 
     public ProductBuilder WithTitle(ProductTitle title)
@@ -46,15 +47,22 @@ public sealed class ProductBuilder
     public Product Build()
     {
         var product = Product.Create(_title, _description, _price, _brand, _imageUrl).Value;
-        product.GetType()!.GetProperty("Active")!.SetValue(product, _active);
+
+        if (_active)
+        {
+            product.Activate();
+        }
+        else 
+        {
+            product.Deactivate();
+        }
 
         return product;
     }
 
-
-    public ProductBuilder WithInactiveStatus()
+    public ProductBuilder WithStatus(bool status)
     {
-        _active = false;
+        _active = status;
         return this;
     }
 }

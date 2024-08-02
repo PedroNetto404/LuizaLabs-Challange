@@ -1,12 +1,14 @@
+using Bogus;
 using FavoriteProducts.Domain.Resources.FavoriteProducts;
 
 namespace FavoriteProducts.UnitTests.Builders;
 
 public sealed class FavoriteProductBuilder
 {
-    private Guid _customerId = Guid.NewGuid();
-    private Guid _productId = Guid.NewGuid();
-    private bool _isDeleted = false;
+    private static readonly Faker _faker = new();
+    private Guid _customerId = _faker.Random.Guid();
+    private Guid _productId = _faker.Random.Guid();
+    private string _productTitle = _faker.Commerce.ProductName();
 
     public FavoriteProductBuilder WithCustomerId(Guid customerId)
     {
@@ -20,15 +22,9 @@ public sealed class FavoriteProductBuilder
         return this;
     }
 
-    public FavoriteProductBuilder WithDeletedStatus()
-    {
-        _isDeleted = true;
-        return this;
-    }
-
     public FavoriteProduct Build()
     {
-        var favoriteProduct = new FavoriteProduct(_customerId, _productId);
+        var favoriteProduct = new FavoriteProduct(_customerId, _productId, _productTitle);
         return favoriteProduct;
     }
 }
