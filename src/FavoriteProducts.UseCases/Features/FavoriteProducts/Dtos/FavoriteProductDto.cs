@@ -6,6 +6,7 @@ public sealed record FavoriteProductDto(
     Guid Id,
     Guid CustomerId, 
     Guid ProductId, 
+    string ProductTitle,
     DateTime CreatedAtUtc)
 {
     public static FavoriteProductDto FromEntity(FavoriteProduct favoriteProduct) =>
@@ -13,5 +14,6 @@ public sealed record FavoriteProductDto(
             favoriteProduct.Id,
             favoriteProduct.CustomerId,
             favoriteProduct.ProductId,
+            favoriteProduct.ProductTitle,
             favoriteProduct.CreatedAtUtc);
 }
