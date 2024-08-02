@@ -8,9 +8,9 @@ namespace FavoriteProducts.Domain.Resources.Customers.Specifications;
 
 public sealed class GetAllCustomersSpecification : Specification<Customer>
 {
-    private static readonly IDictionary<string, Expression<Func<Customer, object?>>> AllowedSortValues = new Dictionary<string, Expression<Func<Customer, object?>>>
+    private static readonly IDictionary<string, Expression<Func<Customer, object>>> AllowedSortValues = new Dictionary<string, Expression<Func<Customer, object>>>
     {
-        {nameof(Customer.Name), p => p.Name},
+        {nameof(Customer.Name), p => p.Name!},
         {nameof(Customer.Email), p => p.Email},
         {nameof(Customer.Id), p => p.Id}
     };
