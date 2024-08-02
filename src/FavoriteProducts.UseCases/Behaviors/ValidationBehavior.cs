@@ -1,3 +1,4 @@
+using FavoriteProducts.Domain.Core.Results;
 using FavoriteProducts.UseCases.Abstractions;
 using FavoriteProducts.UseCases.Exceptions;
 using FluentValidation;
@@ -11,12 +12,13 @@ internal sealed class ValidationBehavior<TCommand, TResponse>(
 )
     : IPipelineBehavior<TCommand, TResponse>
     where TCommand : ICommandBase
+    where TResponse : Result
 {
     public async Task<TResponse> Handle(
-        TCommand request, 
+        TCommand request,
         RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if(!validators.Any())
+        if (!validators.Any())
         {
             return await next();
         }
@@ -31,13 +33,21 @@ internal sealed class ValidationBehavior<TCommand, TResponse>(
             .SelectMany(result => result.Errors)
             .ToList();
 
-        if(failures.Count != 0)
+        if (failures.Count != 0)
         {
             throw new ValidationException(
                 failures.Select(f => new ValidationError(f.PropertyName, f.ErrorMessage))
             );
         }
 
-        return await next();
+        var result = await next();
+        if (result.GetType().IsAssignableTo(typeof(IDomainError)) || result.IsOk)
+        {
+            return result;
+        }
+        
+        throw new ValidationException(
+            [new(result.Error.Code, result.Error.Message)]
+        );
     }
 }

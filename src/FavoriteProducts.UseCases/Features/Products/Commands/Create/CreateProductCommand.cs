@@ -8,5 +8,6 @@ public sealed record CreateProductCommand(
     string Brand,
     string Description,
     decimal Price,
+    int ReviewScore,
     string ImageUrl
 ) : ICommand<ProductDto>;

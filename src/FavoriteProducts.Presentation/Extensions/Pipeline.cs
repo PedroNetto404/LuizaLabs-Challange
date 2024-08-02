@@ -1,4 +1,5 @@
 ﻿using FavoriteProducts.Infrastructure.Data.Relational;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace FavoriteProducts.Presentation.Extensions;
@@ -7,6 +8,8 @@ public static class Pipeline
 {
     public static WebApplication UsePipeline(this WebApplication app)
     {
+        app.UseExceptionHandler();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -34,7 +37,7 @@ public static class Pipeline
         if (!app.Environment.IsDevelopment()) return app;
         using var scope = app.Services.CreateScope();
         var services = scope.ServiceProvider;
-
+        
         services
             .GetRequiredService<DatabaseSeed>()
             .SeedAsync()
@@ -48,11 +51,13 @@ public static class Pipeline
         using var scope = app.Services.CreateScope();
         var services = scope.ServiceProvider;
 
-        services
-            .GetRequiredService<FavoriteProductsContext>()
-            .Database
-            .Migrate();
+        var context = services
+            .GetRequiredService<FavoriteProductsContext>();
+
+        if (!context.Database.CanConnect()) return app;
         
+        context.Database.Migrate();
+
         return app;
     }
 }

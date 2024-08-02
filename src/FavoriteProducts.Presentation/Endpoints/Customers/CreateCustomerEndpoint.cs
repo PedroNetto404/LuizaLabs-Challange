@@ -14,10 +14,9 @@ namespace FavoriteProducts.Presentation.Endpoints.Customers;
 
 public sealed class CreateCustomerEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<CreateCustomerEndpoint.HttpInputModel>
+        .WithRequest<CreateCustomerEndpoint.CreateCustomerHttpInputModel>
         .WithActionResult<CustomerViewModel>
 {
-   
     [HttpPost]
     [Route("/customers")]
     [SwaggerOperation(
@@ -29,24 +28,24 @@ public sealed class CreateCustomerEndpoint(ISender sender) :
     [ProducesResponseType(201, Type = typeof(CustomerViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<CustomerViewModel>> HandleAsync(
-        [FromBody]HttpInputModel command,
+        [FromBody] CreateCustomerHttpInputModel command,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new CreateCustomerCommand(command.Name, command.Email), cancellationToken)
             .MatchAsync<CustomerDto, ActionResult<CustomerViewModel>>(
                 dto => Created($"/customers/{dto.Id}", CustomerViewModel.FromDto(dto)),
-                _ => BadRequest()); 
+                _ => BadRequest());
 
-    [SwaggerSchema("The input model for the create customer endpoint")]
-    public sealed class HttpInputModel
+    public sealed class CreateCustomerHttpInputModel
     {
-        [SwaggerParameter("The customer name"),
-        StringLength(maximumLength: CustomerName.MaxLength, MinimumLength = CustomerName.MinLength)]
+        [SwaggerParameter("The customer name")]
+        [StringLength(maximumLength: CustomerName.MaxLength, MinimumLength = CustomerName.MinLength)]
         [Required]
         public string Name { get; init; } = default!;
-        
-        [SwaggerParameter("The customer email"), 
-        EmailAddress, Required]
+
+        [SwaggerParameter("The customer email")]
+        [EmailAddress]
+        [Required]
         public string Email { get; init; } = default!;
     }
 }

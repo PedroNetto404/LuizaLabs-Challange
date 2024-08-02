@@ -12,6 +12,7 @@ public sealed class ProductBuilder
     private ProductPrice _price = ProductPrice.Create(_faker.Finance.Amount()).Value;
     private ProductBrand _brand = ProductBrand.Create(_faker.Company.CompanyName()).Value;
     private string _imageUrl = _faker.Image.PicsumUrl();
+    private ProductReviewScore _reviewScore = ProductReviewScore.Create(_faker.Random.Int(1, 5)).Value;
     private bool _active = true;
 
     public ProductBuilder WithTitle(ProductTitle title)
@@ -46,7 +47,7 @@ public sealed class ProductBuilder
 
     public Product Build()
     {
-        var product = Product.Create(_title, _description, _price, _brand, _imageUrl).Value;
+        var product = Product.Create(_title, _description, _price, _brand, _reviewScore, _imageUrl).Value;
 
         if (_active)
         {

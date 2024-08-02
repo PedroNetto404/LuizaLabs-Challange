@@ -36,6 +36,7 @@ public sealed class CreateProductEndpoint(ISender sender) :
                 request.Brand,
                 request.Description,
                 request.Price,
+                request.ReviewScore,
                 request.ImageUrl), cancellationToken).MatchAsync<ProductDto, ActionResult<ProductViewModel>>(
                 dto => Created($"products/{dto.Id}", ProductViewModel.FromDto(dto)),
                 (_) => BadRequest());
@@ -66,6 +67,12 @@ public sealed class CreateProductEndpoint(ISender sender) :
         [Display(Name = "Product Price")]
         [SwaggerRequestBody("The product price", Required = true)]
         public decimal Price { get; init; } = ProductPrice.MinValue;
+        
+        [SwaggerParameter("The product review score"), FromBody, Required,
+        Range(ProductReviewScore.MinValue, int.MaxValue)]
+        [Display(Name = "Product Review Score")]
+        [SwaggerRequestBody("The product review score", Required = true)]
+        public int ReviewScore { get; init; } = ProductReviewScore.MinValue;
 
         [SwaggerParameter("The product image url"), FromBody, Required]
         [Display(Name = "Product Image URL")]

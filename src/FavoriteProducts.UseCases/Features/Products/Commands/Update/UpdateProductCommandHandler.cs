@@ -22,6 +22,7 @@ public sealed class UpdateProductCommandHandler(
             brand,
             description,
             price,
+            reviewScore,
             imageUrl,
             active) = command;
 

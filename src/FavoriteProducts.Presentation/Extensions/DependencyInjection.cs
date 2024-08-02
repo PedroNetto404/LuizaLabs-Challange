@@ -20,6 +20,7 @@ internal static class DependencyInjection
         
         container.AddSwagger();
         container.AddExceptionHandler<GlobalExceptionHandler>();
+        container.AddProblemDetails();
 
         return container;
     }

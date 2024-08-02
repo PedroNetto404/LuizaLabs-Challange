@@ -1,9 +1,10 @@
-﻿using FavoriteProducts.Domain.Core.Results;
+﻿using FavoriteProducts.Domain.Core.Abstractions;
+using FavoriteProducts.Domain.Core.Results;
 using FavoriteProducts.Domain.Resources.Errors;
 
 namespace FavoriteProducts.Domain.Resources.Products.ValueObjects;
 
-public sealed record ProductPrice
+public sealed record ProductPrice : ValueObject
 {
     public const decimal MinValue = 0.01m;
     public decimal Value { get; }

@@ -12,6 +12,7 @@ public sealed class Product : Entity, IAuditableEntity
         ProductDescription description,
         ProductPrice price,
         ProductBrand brand,
+        ProductReviewScore reviewScore,
         string imageUrl)
     {
         Title = title;
@@ -19,6 +20,7 @@ public sealed class Product : Entity, IAuditableEntity
         Price = price;
         Brand = brand;
         ImageUrl = imageUrl;
+        ReviewScore = reviewScore;
     }
 
     public static Result<Product> Create(
@@ -26,6 +28,7 @@ public sealed class Product : Entity, IAuditableEntity
         ProductDescription description,
         ProductPrice price,
         ProductBrand brand,
+        ProductReviewScore reviewScore,
         string imageUrl)
     {
         if (string.IsNullOrEmpty(imageUrl))
@@ -33,7 +36,7 @@ public sealed class Product : Entity, IAuditableEntity
             return DomainErrors.Product.InvalidProduct;
         }
 
-        return new Product(title, description, price, brand, imageUrl)
+        return new Product(title, description, price, brand, reviewScore, imageUrl)
         {
             DeletedAtUtc = null
         };
@@ -43,6 +46,7 @@ public sealed class Product : Entity, IAuditableEntity
     public ProductDescription Description { get; private set; }
     public ProductPrice Price { get; private set; }
     public ProductBrand Brand { get; private set; }
+    public ProductReviewScore ReviewScore { get; private set; }
     public string ImageUrl { get; private set; }
     public bool Active { get; private set; }
     public DateTime CreatedAtUtc { get; } = DateTime.UtcNow;
@@ -54,6 +58,28 @@ public sealed class Product : Entity, IAuditableEntity
     public void Deactivate() => Active = false;
 
     public Result UpdateImageUrl(string imageUrl) => ImageUrl == imageUrl ? Result.Ok() : ChangeImageUrl(imageUrl);
+
+    public Result UpdateReview(int review)
+    {
+        if(ReviewScore.Value == review)
+        {
+            return Result.Ok();
+        }
+        
+        if(review < ReviewScore.Value)
+        {
+            return DomainErrors.Product.CannotDecreaseReviewScore;
+        }
+        
+        var reviewScore = ProductReviewScore.Create(review);
+        if (reviewScore.IsFailure)
+        {
+            return reviewScore.Error;
+        }
+        
+        ReviewScore = reviewScore.Value;
+        return Result.Ok();
+    }
 
     public Result UpdatePrice(decimal price)
     {
@@ -141,7 +167,10 @@ public sealed class Product : Entity, IAuditableEntity
     //Required by EF Core
 #pragma warning disable CS0628 // New protected member declared in sealed type
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    protected Product() { }
+    protected Product(ProductReviewScore reviewScore)
+    {
+        ReviewScore = reviewScore;
+    }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 #pragma warning restore CS0628 // New protected member declared in sealed type
 }

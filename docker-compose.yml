@@ -1,11 +1,26 @@
 version: '3.7'
 
 services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend
+  
   favorite-products-api:
+    restart: always
     container_name: favorite-products-api
-    build: 
+    build:
       context: .
-      dockerfile: src/FavoriteProducts.Presentation/Dockerfile
+      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     networks:
@@ -16,24 +31,8 @@ services:
       - "5000:8080"
       - "5001:443"
 
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - backend
-
-
 networks:
   backend:
-    driver: bridge
 
 volumes:
   postgres-data:      

@@ -14,7 +14,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Customers.FavoriteProducts;
 
 public sealed class CreateFavoriteProductEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<CreateFavoriteProductEndpoint.HttpInputModel>
+        .WithRequest<CreateFavoriteProductEndpoint.FavoriteProductInputModel>
         .WithActionResult<FavoriteProductViewModel>
 {
     [HttpPost]
@@ -28,20 +28,19 @@ public sealed class CreateFavoriteProductEndpoint(ISender sender) :
     [ProducesResponseType(201, Type = typeof(FavoriteProductViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<FavoriteProductViewModel>> HandleAsync(
-        [FromBody]HttpInputModel input,
+        [FromBody] FavoriteProductInputModel input,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(
                 new FavoriteProductCommand(
                     RouteData.Values["customerId"] is string customerId ? Guid.Parse(customerId) : Guid.Empty,
-                    input.ProductId), 
+                    input.ProductId),
                 cancellationToken)
             .MatchAsync<FavoriteProductDto, ActionResult<FavoriteProductViewModel>>(
-                (dto) => Created($"/customers/{dto.CustomerId}/favorite-products/{dto.Id}",
-                    FavoriteProductViewModel.FromDto(dto)),
+                dto => Created($"/customers/{dto.CustomerId}/favorite-products/{dto.Id}", FavoriteProductViewModel.FromDto(dto)),
                 _ => BadRequest());
 
-    public sealed record HttpInputModel
+    public sealed record FavoriteProductInputModel
     {
         [SwaggerParameter("The product id")]
         [Required]

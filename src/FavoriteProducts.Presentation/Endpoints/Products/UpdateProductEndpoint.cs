@@ -38,6 +38,7 @@ public sealed class UpdateProductEndpoint(ISender sender) :
                 httpInput.Brand,
                 httpInput.Description,
                 httpInput.Price,
+                httpInput.ReviewScore,
                 httpInput.ImageUrl,
                 httpInput.Active), cancellationToken)
             .MatchAsync<ProductDto, ActionResult<ProductViewModel>>(
@@ -66,6 +67,11 @@ public sealed class UpdateProductEndpoint(ISender sender) :
         [SwaggerParameter("The product price")]
         [Range((double)ProductPrice.MinValue, double.MaxValue)]
         public decimal Price { get; init; }
+
+        [Required]
+        [SwaggerParameter("The product review score")]
+        [Range(ProductReviewScore.MinValue, int.MaxValue)]
+        public int ReviewScore { get; set; }
 
         [Required]
         [SwaggerParameter("The product image url")]

@@ -23,6 +23,15 @@ public sealed class ProductMapping : AuditableEntityMapping<Product>
                 )
                 .HasAnnotation("MaxLength", ProductTitle.MaxLength)
                 .HasAnnotation("MinLength", ProductTitle.MinLength);
+        
+        builder.Property(p => p.ReviewScore)
+                .HasColumnName("review_score")
+                .IsRequired()
+                .HasConversion(
+                    x => x.Value,
+                    x => ProductReviewScore.Create(x).Value
+                )
+                .HasAnnotation("MinValue", ProductReviewScore.MinValue);
 
         builder.Property(x => x.Description)
                 .HasColumnName("description")

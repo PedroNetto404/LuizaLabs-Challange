@@ -1,9 +1,10 @@
-﻿using FavoriteProducts.Domain.Core.Results;
+﻿using FavoriteProducts.Domain.Core.Abstractions;
+using FavoriteProducts.Domain.Core.Results;
 using FavoriteProducts.Domain.Resources.Errors;
 
 namespace FavoriteProducts.Domain.Resources.Products.ValueObjects;
 
-public sealed record ProductDescription
+public sealed record ProductDescription : ValueObject
 {
     public const int MaxLength = 1000;
     public const int MinLength = 5;

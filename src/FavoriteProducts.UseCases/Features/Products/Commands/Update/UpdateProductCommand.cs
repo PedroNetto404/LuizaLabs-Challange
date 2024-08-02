@@ -9,6 +9,7 @@ public sealed record UpdateProductCommand(
     string Brand,
     string Description,
     decimal Price,
+    int ReviewScore,
     string ImageUrl,
     bool Active
 ) : ICommand<ProductDto>;

@@ -24,14 +24,16 @@ public sealed class CreateProductCommandHandler(
             maybeTitle,
             maybeBrand,
             maybeDescription,
-            maybePrice
-        ) = maybeFields.Value;
+            maybePrice,
+            maybeReviewScore
+            ) = maybeFields.Value;
 
         var maybeProduct = Product.Create(
             maybeTitle,
             maybeDescription,
             maybePrice,
             maybeBrand,
+            maybeReviewScore,
             request.ImageUrl);
         if (maybeProduct.IsFailure)
         {
@@ -40,12 +42,13 @@ public sealed class CreateProductCommandHandler(
 
         await productRepository.AddAsync(maybeProduct.Value);
         return await unitOfWork.CommitAsync(cancellationToken) is true
-        ? ProductDto.FromEntity(maybeProduct.Value)
-        : DomainErrors.Product.CreateProductFailed;
+            ? ProductDto.FromEntity(maybeProduct.Value)
+            : DomainErrors.Product.CreateProductFailed;
     }
 
-    public static Result<(ProductTitle, ProductBrand, ProductDescription, ProductPrice)> TryBuildFields(
-        CreateProductCommand request)
+    private static Result<(ProductTitle, ProductBrand, ProductDescription, ProductPrice, ProductReviewScore)>
+        TryBuildFields(
+            CreateProductCommand request)
     {
         var maybeTitle = ProductTitle.Create(request.Title);
         if (maybeTitle.IsFailure)
@@ -71,10 +74,18 @@ public sealed class CreateProductCommandHandler(
             return maybePrice.Error;
         }
 
+        var maybeReviewScore = ProductReviewScore.Create(request.ReviewScore);
+        if (maybeReviewScore.IsFailure)
+        {
+            return maybeReviewScore.Error;
+        }
+
         return (
-            maybeTitle.Value, 
-            maybeBrand.Value, 
-            maybeDescription.Value, 
-            maybePrice.Value);
+            maybeTitle.Value,
+            maybeBrand.Value,
+            maybeDescription.Value,
+            maybePrice.Value,
+            maybeReviewScore.Value
+        );
     }
 }
