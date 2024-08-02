@@ -1,4 +1,7 @@
-﻿namespace FavoriteProducts.Presentation.Extensions;
+﻿using FavoriteProducts.Infrastructure.Data.Relational;
+using Microsoft.EntityFrameworkCore;
+
+namespace FavoriteProducts.Presentation.Extensions;
 
 public static class Pipeline
 {
@@ -23,6 +26,35 @@ public static class Pipeline
 
         app.MapControllers();
 
+        return app;
+    }
+
+    public static WebApplication SeedDatabaseIfDevelopment(this WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+
+            services
+                .GetRequiredService<DatabaseSeed>()
+                .SeedAsync()
+                .Wait();
+        }
+
+        return app;
+    }
+
+    public static WebApplication ApplyMigration(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
+
+        services
+            .GetRequiredService<FavoriteProductsContext>()
+            .Database
+            .Migrate();
+        
         return app;
     }
 }
