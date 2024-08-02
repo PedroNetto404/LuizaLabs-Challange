@@ -9,8 +9,6 @@ public static partial class DomainErrors
     {
         public static readonly DomainResult<ProductEntity> NotFound = new("product_not_found", "Product not found.");
         public static readonly DomainResult<ProductEntity> InvalidProduct = new("invalid_product", "Product can't have invalid state");
-        public static readonly DomainResult<ProductEntity> ProductAlreadyActive = new("product_already_active", "Product already active.");
-        public static readonly DomainResult<ProductEntity> ProductAlreadyInactive = new("product_already_inactive", "Product already inactive.");
         public static readonly DomainResult<ProductEntity> InvalidImageUrl = new("invalid_image_url", "Product can't have invalid image url");
         public static readonly DomainResult<ProductEntity> InvalidProductPrice = new("invalid_product_price", "Product can't have invalid price");
         public static readonly DomainResult<ProductEntity> InvalidProductDescription = new("invalid_product_description", "Product can't have invalid description");
