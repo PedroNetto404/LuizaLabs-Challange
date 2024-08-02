@@ -85,6 +85,12 @@ namespace FavoriteProducts.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("product_id");
 
+                    b.Property<string>("ProductTitle")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("product_title");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
