@@ -13,6 +13,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FavoriteProducts.Domain", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FavoriteProducts.UseCases", "src\FavoriteProducts.UseCases\FavoriteProducts.UseCases.csproj", "{987001AC-87BC-4C90-A3B3-FBEA03B0E48B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6ED428F4-3814-4FDA-96A9-F36D00843426}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FavoriteProducts.UnitTests", "tests\FavoriteProducts.UnitTests\FavoriteProducts.UnitTests.csproj", "{ECA1F90F-FA4E-4592-BF0D-C25453C0E841}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{2028A10D-AA38-4F5C-A048-4B1DA093AB3D}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		README.md = README.md
+		.env = .env
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,11 +50,16 @@ Global
 		{987001AC-87BC-4C90-A3B3-FBEA03B0E48B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{987001AC-87BC-4C90-A3B3-FBEA03B0E48B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{987001AC-87BC-4C90-A3B3-FBEA03B0E48B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECA1F90F-FA4E-4592-BF0D-C25453C0E841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECA1F90F-FA4E-4592-BF0D-C25453C0E841}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECA1F90F-FA4E-4592-BF0D-C25453C0E841}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECA1F90F-FA4E-4592-BF0D-C25453C0E841}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{11E5F836-BFC4-430E-8172-76EC531AF03E} = {FFA30921-A484-4DFA-B4EF-16DD66F3503E}
 		{E5B046C4-80F7-4B42-9A31-A2A435D406AA} = {FFA30921-A484-4DFA-B4EF-16DD66F3503E}
 		{A017E8FE-AFA4-4DCD-8771-397A49B4273F} = {FFA30921-A484-4DFA-B4EF-16DD66F3503E}
 		{987001AC-87BC-4C90-A3B3-FBEA03B0E48B} = {FFA30921-A484-4DFA-B4EF-16DD66F3503E}
+		{ECA1F90F-FA4E-4592-BF0D-C25453C0E841} = {6ED428F4-3814-4FDA-96A9-F36D00843426}
 	EndGlobalSection
 EndGlobal
