@@ -16,9 +16,9 @@ public class Result
 
     public static Result<TValue> Fail<TValue>(Error error) => new(error);
 
-    public bool IsOk => _error is null;
+    public virtual bool IsOk => _error is null;
 
-    public bool IsFailure => _error is not null;
+    public virtual bool IsFailure => _error is not null;
 
     public Error Error =>
         IsOk ? throw new InvalidOperationException("Cannot access error when value is present.") : _error!;

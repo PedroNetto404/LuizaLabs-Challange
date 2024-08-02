@@ -22,4 +22,8 @@ public sealed class Result<TValue> : Result
 
     public static implicit operator Result<TValue>(Error error) =>
         Fail<TValue>(error);
+
+    public override bool IsOk => base.IsOk && _value is not null;
+
+    public override bool IsFailure => base.IsFailure && _value is null;
 }
