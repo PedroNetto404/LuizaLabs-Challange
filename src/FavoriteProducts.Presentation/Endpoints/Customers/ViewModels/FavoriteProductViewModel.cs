@@ -6,13 +6,10 @@ namespace FavoriteProducts.Presentation.Endpoints.Customers.ViewModels;
 
 public sealed record FavoriteProductViewModel
 {
-    [JsonPropertyName("product_id")]
     public Guid ProductId { get; init; }
 
-    [JsonPropertyName("customer_id")]
     public Guid CustomerId { get; init; }
 
-    [JsonPropertyName("created_at_utc")]
     public DateTime CreatedAtUtc { get; init; }
 
     public static FavoriteProductViewModel FromDto(FavoriteProductDto dto) =>

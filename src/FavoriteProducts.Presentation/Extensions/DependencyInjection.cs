@@ -1,4 +1,6 @@
-﻿using FavoriteProducts.Presentation.Handlers;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using FavoriteProducts.Presentation.Handlers;
 using Microsoft.OpenApi.Models;
 
 namespace FavoriteProducts.Presentation.Extensions;
@@ -7,7 +9,15 @@ internal static class DependencyInjection
 {
     public static IServiceCollection AddPresentationServices(this IServiceCollection container)
     {
-        container.AddControllers();
+        container
+            .AddControllers()
+            .AddJsonOptions(p =>
+        {
+            p.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+            p.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
+            p.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        });
+        
         container.AddSwagger();
         container.AddExceptionHandler<GlobalExceptionHandler>();
 

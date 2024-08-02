@@ -65,7 +65,6 @@ public sealed class GetAllCustomersEndpoint(ISender sender) :
         [FromQuery(Name = "sort_order")]
         [DefaultValue(nameof(SortOrderEnum.Asc))]
         [AllowedValues(nameof(SortOrderEnum.Asc), nameof(SortOrderEnum.Desc))]
-        [JsonConverter(typeof(JsonStringEnumConverter<SortOrderEnum>))]
         public string SortOrder { get; init; } = nameof(SortOrderEnum.Asc);
     }
 }

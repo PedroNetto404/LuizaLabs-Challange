@@ -29,7 +29,7 @@ public sealed class CreateCustomerEndpoint(ISender sender) :
     [ProducesResponseType(201, Type = typeof(CustomerViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<CustomerViewModel>> HandleAsync(
-        HttpInputModel command,
+        [FromBody]HttpInputModel command,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new CreateCustomerCommand(command.Name, command.Email), cancellationToken)
@@ -40,15 +40,13 @@ public sealed class CreateCustomerEndpoint(ISender sender) :
     [SwaggerSchema("The input model for the create customer endpoint")]
     public sealed class HttpInputModel
     {
-        [SwaggerParameter("The customer name"), FromBody,
+        [SwaggerParameter("The customer name"),
         StringLength(maximumLength: CustomerName.MaxLength, MinimumLength = CustomerName.MinLength)]
-        [JsonPropertyName("name")]
         [Required]
         public string Name { get; init; } = default!;
         
-        [SwaggerParameter("The customer email"), FromBody, 
+        [SwaggerParameter("The customer email"), 
         EmailAddress, Required]
-        [JsonPropertyName("email")]
         public string Email { get; init; } = default!;
     }
 }

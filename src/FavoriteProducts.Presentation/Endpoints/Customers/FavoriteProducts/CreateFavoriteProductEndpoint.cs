@@ -28,12 +28,12 @@ public sealed class CreateFavoriteProductEndpoint(ISender sender) :
     [ProducesResponseType(201, Type = typeof(FavoriteProductViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<FavoriteProductViewModel>> HandleAsync(
-        HttpInputModel input,
+        [FromBody]HttpInputModel input,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(
                 new FavoriteProductCommand(
-                    input.CustomerId, 
+                    RouteData.Values["customerId"] is string customerId ? Guid.Parse(customerId) : Guid.Empty,
                     input.ProductId), 
                 cancellationToken)
             .MatchAsync<FavoriteProductDto, ActionResult<FavoriteProductViewModel>>(
@@ -43,18 +43,9 @@ public sealed class CreateFavoriteProductEndpoint(ISender sender) :
 
     public sealed record HttpInputModel
     {
-        [FromRoute(Name = "customerId")]
-        [SwaggerParameter("The customer id")]
-        [Required]
-        [DeniedValues("00000000-0000-0000-0000-000000000000")]
-        [JsonPropertyName("customer_id")]
-        public Guid CustomerId { get; init; }
-
-        [FromBody]
         [SwaggerParameter("The product id")]
         [Required]
         [DeniedValues("00000000-0000-0000-0000-000000000000")]
-        [JsonPropertyName("product_id")]
         public Guid ProductId { get; init; }
     }
 }

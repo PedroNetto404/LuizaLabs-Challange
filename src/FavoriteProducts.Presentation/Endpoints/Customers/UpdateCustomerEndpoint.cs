@@ -27,27 +27,25 @@ public sealed class UpdateCustomerEndpoint(ISender sender) :
     [ProducesResponseType(200, Type = typeof(CustomerViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<CustomerViewModel>> HandleAsync(
-        HttpInputModel model,
+        [FromBody]HttpInputModel model,
         CancellationToken cancellationToken = default) =>
         sender
-            .Send(new UpdateCustomerCommand(model.Id, model.Name, model.Email), cancellationToken)
+            .Send(new UpdateCustomerCommand(
+                RouteData.Values["customerId"] is string customerId ? Guid.Parse(customerId) : Guid.Empty, 
+                model.Name, 
+                model.Email), cancellationToken)
             .MatchAsync<CustomerDto, ActionResult<CustomerViewModel>>(
-                (dto) => Ok(CustomerViewModel.FromDto(dto)),
+                dto => Ok(CustomerViewModel.FromDto(dto)),
                 _ => BadRequest());
 
     public sealed class HttpInputModel
     {
-        [SwaggerParameter("The customer id"), FromRoute(Name = "customerId"),
-        DeniedValues("00000000-0000-0000-0000-000000000000"),
-        Required]
-        public Guid Id { get; init; } = default!;
-
-        [SwaggerParameter("The customer name"), FromBody,
+        [SwaggerParameter("The customer name"),
         Required,
         StringLength(maximumLength: CustomerName.MaxLength, MinimumLength = CustomerName.MinLength)]
         public string Name { get; init; } = default!;
 
-        [SwaggerParameter("The customer email"), FromBody,
+        [SwaggerParameter("The customer email"),
         Required,
         EmailAddress]
         public string Email { get; init; } = default!;
