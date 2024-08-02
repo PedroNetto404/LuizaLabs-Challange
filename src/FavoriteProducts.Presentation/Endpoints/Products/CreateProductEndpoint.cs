@@ -28,7 +28,7 @@ public sealed class CreateProductEndpoint(ISender sender) :
     [ProducesResponseType(201, Type = typeof(ProductViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<ProductViewModel>> HandleAsync(
-        HttpInputModel request,
+        [FromBody]HttpInputModel request,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new CreateProductCommand(
@@ -45,34 +45,29 @@ public sealed class CreateProductEndpoint(ISender sender) :
     {
         [SwaggerParameter("The product title"), FromBody, Required,
         StringLength(maximumLength: ProductTitle.MaxLength, MinimumLength = ProductTitle.MinLength)]
-        [JsonPropertyName("title")]
         [Display(Name = "Product Title")]
         [SwaggerRequestBody("The product title", Required = true)]
         public string Title { get; init; } = string.Empty;
 
         [SwaggerParameter("The product brand"), FromBody, Required,
         StringLength(maximumLength: ProductBrand.MaxLength, MinimumLength = ProductBrand.MinLength)]
-        [JsonPropertyName("brand")]
         [Display(Name = "Product Brand")]
         [SwaggerRequestBody("The product brand", Required = true)]
         public string Brand { get; init; } = string.Empty;
 
         [SwaggerParameter("The product description"), FromBody, Required,
         StringLength(maximumLength: ProductDescription.MaxLength, MinimumLength = ProductDescription.MinLength)]
-        [JsonPropertyName("description")]
         [Display(Name = "Product Description")]
         [SwaggerRequestBody("The product description", Required = true)]
         public string Description { get; init; } = string.Empty;
 
         [SwaggerParameter("The product price"), FromBody, Required,
         Range((double)ProductPrice.MinValue, double.MaxValue)]
-        [JsonPropertyName("price")]
         [Display(Name = "Product Price")]
         [SwaggerRequestBody("The product price", Required = true)]
         public decimal Price { get; init; } = ProductPrice.MinValue;
 
         [SwaggerParameter("The product image url"), FromBody, Required]
-        [JsonPropertyName("image_url")]
         [Display(Name = "Product Image URL")]
         [SwaggerRequestBody("The product image url", Required = true)]
         public string ImageUrl { get; init; } = string.Empty;

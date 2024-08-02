@@ -15,9 +15,9 @@ namespace FavoriteProducts.Presentation.Endpoints.Products;
 
 public sealed class UpdateProductEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<UpdateProductEndpoint.HttpInputModel>
-        .WithActionResult<ProductViewModel>
-{   
+    .WithRequest<UpdateProductEndpoint.HttpInputModel>
+    .WithActionResult<ProductViewModel>
+{
     [HttpPut]
     [Route("/products/{productId:guid}")]
     [SwaggerOperation(
@@ -25,21 +25,21 @@ public sealed class UpdateProductEndpoint(ISender sender) :
         Description = "Update a product",
         OperationId = "Products_Update",
         Tags = ["Products"]
-    )] 
+    )]
     [ProducesResponseType(200, Type = typeof(ProductViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<ProductViewModel>> HandleAsync(
-        HttpInputModel httpInput,
+        [FromBody]HttpInputModel httpInput,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new UpdateProductCommand(
-                httpInput.ProductId,
-                httpInput.Model.Title,
-                httpInput.Model.Brand,
-                httpInput.Model.Description,
-                httpInput.Model.Price,
-                httpInput.Model.ImageUrl,
-                httpInput.Model.Active), cancellationToken)
+                RouteData.Values["productId"] is string productId ? Guid.Parse(productId) : Guid.Empty,
+                httpInput.Title,
+                httpInput.Brand,
+                httpInput.Description,
+                httpInput.Price,
+                httpInput.ImageUrl,
+                httpInput.Active), cancellationToken)
             .MatchAsync<ProductDto, ActionResult<ProductViewModel>>(
                 (dto) => Ok(ProductViewModel.FromDto(dto)),
                 _ => BadRequest());
@@ -47,53 +47,33 @@ public sealed class UpdateProductEndpoint(ISender sender) :
     [SwaggerSchema("The request model for the update product endpoint")]
     public sealed record HttpInputModel
     {
-        [SwaggerParameter("The product id")]
-        [DeniedValues("00000000-0000-0000-0000-000000000000")]
-        [FromRoute(Name = "productId")]
         [Required]
-        public Guid ProductId { get; init; }
+        [SwaggerParameter("The product title")]
+        [StringLength(maximumLength: ProductTitle.MaxLength, MinimumLength = ProductTitle.MinLength)]
+        public string Title { get; init; } = default!;
 
-        [FromBody]
         [Required]
-        [SwaggerParameter("The product model")]
-        public Product Model { get; init; } = default!;
+        [SwaggerParameter("The product brand")]
+        [StringLength(maximumLength: ProductBrand.MaxLength, MinimumLength = ProductBrand.MinLength)]
+        public string Brand { get; init; } = default!;
 
-        public record Product
-        {
-            [Required]
-            [SwaggerParameter("The product title")]
-            [JsonPropertyName("title")]
-            [StringLength(maximumLength: ProductTitle.MaxLength, MinimumLength = ProductTitle.MinLength)]
-            public string Title { get; init; } = default!;
-            
-            [Required]
-            [SwaggerParameter("The product brand")]
-            [JsonPropertyName("brand")]
-            [StringLength(maximumLength: ProductBrand.MaxLength, MinimumLength = ProductBrand.MinLength)]
-            public string Brand { get; init; } = default!;
+        [Required]
+        [SwaggerParameter("The product description")]
+        [StringLength(maximumLength: ProductDescription.MaxLength, MinimumLength = ProductDescription.MinLength)]
+        public string Description { get; init; } = default!;
 
-            [Required]
-            [SwaggerParameter("The product description")]
-            [JsonPropertyName("description")]
-            [StringLength(maximumLength: ProductDescription.MaxLength, MinimumLength = ProductDescription.MinLength)]
-            public string Description { get; init; } = default!;
+        [Required]
+        [SwaggerParameter("The product price")]
+        [Range((double)ProductPrice.MinValue, double.MaxValue)]
+        public decimal Price { get; init; }
 
-            [Required]
-            [SwaggerParameter("The product price")]
-            [Range((double)ProductPrice.MinValue, double.MaxValue)]
-            [JsonPropertyName("price")]
-            public decimal Price { get; init; }
+        [Required]
+        [SwaggerParameter("The product image url")]
+        public string ImageUrl { get; init; } = default!;
 
-            [Required]
-            [SwaggerParameter("The product image url")]
-            [JsonPropertyName("image_url")]
-            public string ImageUrl { get; init; } = default!;
-
-            [Required]
-            [SwaggerParameter("The product active status")]
-            [DefaultValue(true)]
-            [JsonPropertyName("active")]
-            public bool Active { get; init; }
-        }
+        [Required]
+        [SwaggerParameter("The product active status")]
+        [DefaultValue(true)]
+        public bool Active { get; init; }
     }
 }
