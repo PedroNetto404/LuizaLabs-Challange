@@ -1,6 +1,7 @@
 using FavoriteProducts.Domain.Resources.Customers;
 using FavoriteProducts.Domain.Resources.FavoriteProducts;
 using FavoriteProducts.Domain.Resources.Products;
+using FavoriteProducts.Domain.Resources.Products.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -27,6 +28,11 @@ public sealed class FavoriteProductMapping : AuditableEntityMapping<FavoriteProd
             .HasColumnName("product_id")
             .IsRequired()
             .HasColumnType("uuid");
+
+        builder.Property(p => p.ProductTitle)
+            .IsRequired()
+            .HasColumnName("product_title")
+            .HasMaxLength(ProductTitle.MaxLength);
 
         builder.HasOne<Product>()
             .WithMany()

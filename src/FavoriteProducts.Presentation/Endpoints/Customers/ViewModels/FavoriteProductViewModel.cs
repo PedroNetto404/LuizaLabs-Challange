@@ -4,19 +4,16 @@ using FavoriteProducts.UseCases.Features.FavoriteProducts.Dtos;
 
 namespace FavoriteProducts.Presentation.Endpoints.Customers.ViewModels;
 
-public sealed record FavoriteProductViewModel
+public sealed record FavoriteProductViewModel(
+    Guid ProductId,
+    Guid CustomerId,
+    string ProductTitle,
+    DateTime CreatedAtUtc)
 {
-    public Guid ProductId { get; init; }
-
-    public Guid CustomerId { get; init; }
-
-    public DateTime CreatedAtUtc { get; init; }
-
     public static FavoriteProductViewModel FromDto(FavoriteProductDto dto) =>
-        new()
-        {
-            ProductId = dto.ProductId,
-            CustomerId = dto.CustomerId,
-            CreatedAtUtc = dto.CreatedAtUtc
-        };
+        new(
+            dto.ProductId,
+            dto.CustomerId,
+            dto.ProductTitle,
+            dto.CreatedAtUtc);
 }

@@ -37,7 +37,7 @@ namespace FavoriteProducts.Infrastructure.Data.Relational;
                     .Take(10)
                     .Select(p =>
                     {
-                        var favorite = new FavoriteProduct(customer.Id, p.Id)
+                        var favorite = new FavoriteProduct(customer.Id, p.Id, p.Title.Value)
                         {
                             DeletedAtUtc = null
                         };

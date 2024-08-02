@@ -32,7 +32,7 @@ public sealed class GetAllFavoriteProductsEndpoint(ISender sender) :
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new GetAllFavoriteProductsQuery(
-                request.CustomerId,
+                RouteData.Values["customerId"] is string customerId ? Guid.Parse(customerId) : Guid.Empty,
                 request.Page,
                 request.PageSize), cancellationToken)
             .MatchAsync
@@ -40,7 +40,7 @@ public sealed class GetAllFavoriteProductsEndpoint(ISender sender) :
                 IEnumerable<FavoriteProductDto>, 
                 ActionResult<IEnumerable<FavoriteProductViewModel>>
             >(
-                (dtos) => Ok(dtos.Select(FavoriteProductViewModel.FromDto)),
+                dtos => Ok(dtos.Select(FavoriteProductViewModel.FromDto)),
                 _ => BadRequest()
             );
 
@@ -56,10 +56,5 @@ public sealed class GetAllFavoriteProductsEndpoint(ISender sender) :
         [FromQuery(Name = "page-size")]
         [SwaggerParameter("The page size")]
         public int PageSize { get; init; } = 10;
-
-        [FromRoute(Name = "customerId")]
-        [SwaggerParameter("The customer id")]
-        [Required]
-        public Guid CustomerId { get; init; }
     }
 }
