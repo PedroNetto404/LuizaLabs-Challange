@@ -15,7 +15,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Products;
 
 public sealed class GetAllProductsEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<GetAllProductsEndpoint.HttpInputModel>
+        .WithRequest<GetAllProductsEndpoint.GetAllProductsModel>
         .WithActionResult<IEnumerable<ProductViewModel>>
 {
     [HttpGet]
@@ -29,7 +29,7 @@ public sealed class GetAllProductsEndpoint(ISender sender) :
     [ProducesResponseType(200, Type = typeof(IEnumerable<ProductViewModel>))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<IEnumerable<ProductViewModel>>> HandleAsync(
-        HttpInputModel request,
+        GetAllProductsModel request,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new GetAllProductsQuery(
@@ -43,7 +43,7 @@ public sealed class GetAllProductsEndpoint(ISender sender) :
                 _ => BadRequest());
     
     [SwaggerSchema("The request model for the endpoint")]
-    public sealed record HttpInputModel
+    public sealed record GetAllProductsModel
     {
         [FromQuery(Name = "page")]
         [DefaultValue(1)]

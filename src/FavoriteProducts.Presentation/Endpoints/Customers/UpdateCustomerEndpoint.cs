@@ -13,7 +13,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Customers;
 
 public sealed class UpdateCustomerEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<UpdateCustomerEndpoint.HttpInputModel>
+        .WithRequest<UpdateCustomerEndpoint.UpdateCustomerModel>
         .WithActionResult<CustomerViewModel>
 {
     [HttpPut]
@@ -27,7 +27,7 @@ public sealed class UpdateCustomerEndpoint(ISender sender) :
     [ProducesResponseType(200, Type = typeof(CustomerViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<CustomerViewModel>> HandleAsync(
-        [FromBody]HttpInputModel model,
+        [FromBody]UpdateCustomerModel model,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new UpdateCustomerCommand(
@@ -38,7 +38,7 @@ public sealed class UpdateCustomerEndpoint(ISender sender) :
                 dto => Ok(CustomerViewModel.FromDto(dto)),
                 _ => BadRequest());
 
-    public sealed class HttpInputModel
+    public sealed class UpdateCustomerModel
     {
         [SwaggerParameter("The customer name"),
         Required,

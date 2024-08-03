@@ -12,7 +12,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Customers;
 
 public sealed class GetCustomerByIdEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<GetCustomerByIdEndpoint.HttpInputModel>
+        .WithRequest<GetCustomerByIdEndpoint.GetCustomerByIdModel>
         .WithActionResult<CustomerViewModel>
 {
     [HttpGet]
@@ -26,7 +26,7 @@ public sealed class GetCustomerByIdEndpoint(ISender sender) :
     [ProducesResponseType(200, Type = typeof(CustomerViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<CustomerViewModel>> HandleAsync(
-        HttpInputModel input,
+        GetCustomerByIdModel input,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new GetCustomerByIdQuery(input.Id), cancellationToken)
@@ -35,7 +35,7 @@ public sealed class GetCustomerByIdEndpoint(ISender sender) :
                 _ => BadRequest());
 
     [SwaggerSchema("The request model for the endpoint")]
-    public sealed class HttpInputModel
+    public sealed class GetCustomerByIdModel
     {
         [SwaggerParameter("The customer id"), FromRoute(Name = "id"), Required,
         DeniedValues("00000000-0000-0000-0000-000000000000")]

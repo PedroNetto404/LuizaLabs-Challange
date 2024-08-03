@@ -13,7 +13,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Customers.FavoriteProducts;
 
 public sealed class GetAllFavoriteProductsEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<GetAllFavoriteProductsEndpoint.HttpInputModel>
+        .WithRequest<GetAllFavoriteProductsEndpoint.GetAllFavoriteProductsModel>
         .WithActionResult<IEnumerable<FavoriteProductViewModel>>
 
 {
@@ -28,7 +28,7 @@ public sealed class GetAllFavoriteProductsEndpoint(ISender sender) :
     [ProducesResponseType(200, Type = typeof(IEnumerable<FavoriteProductViewModel>))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<IEnumerable<FavoriteProductViewModel>>> HandleAsync(
-        HttpInputModel request,
+        GetAllFavoriteProductsModel request,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new GetAllFavoriteProductsQuery(
@@ -45,7 +45,7 @@ public sealed class GetAllFavoriteProductsEndpoint(ISender sender) :
             );
 
     [SwaggerSchema("The request model for the endpoint")]
-     public sealed record HttpInputModel
+     public sealed record GetAllFavoriteProductsModel
     {
         [Range(1, int.MaxValue)]
         [FromQuery(Name = "page")]

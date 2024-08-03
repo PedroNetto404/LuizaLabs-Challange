@@ -10,7 +10,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Customers;
 
 public sealed class DeleteCustomerEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<DeleteCustomerEndpoint.HttpInputModel>
+        .WithRequest<DeleteCustomerEndpoint.DeleteCustomerModel>
         .WithActionResult
 {
     [HttpDelete]
@@ -24,7 +24,7 @@ public sealed class DeleteCustomerEndpoint(ISender sender) :
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     public override Task<ActionResult> HandleAsync(
-        HttpInputModel input,
+        DeleteCustomerModel input,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new DeleteCustomerCommand(input.Id), cancellationToken)
@@ -33,7 +33,7 @@ public sealed class DeleteCustomerEndpoint(ISender sender) :
                 _ => BadRequest());
 
     [SwaggerSchema("The request model for the delete customer endpoint")]
-    public sealed class HttpInputModel
+    public sealed class DeleteCustomerModel
     {
         [SwaggerParameter("The customer id"), FromRoute(Name = "id"), Required,
         DeniedValues("00000000-0000-0000-0000-000000000000")]

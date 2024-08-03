@@ -10,7 +10,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Products;
 
 public sealed class DeleteProductEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<DeleteProductEndpoint.HttpInputModel>
+        .WithRequest<DeleteProductEndpoint.DeleteProductModel>
         .WithActionResult
 {
     [HttpDelete]
@@ -24,14 +24,14 @@ public sealed class DeleteProductEndpoint(ISender sender) :
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     public override Task<ActionResult> HandleAsync(
-        HttpInputModel request,
+        DeleteProductModel request,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new DeleteProductCommand(request.ProductId), cancellationToken)
             .MatchAsync<ActionResult>(NoContent, BadRequest);
     
     [SwaggerSchema("The request model for the delete product endpoint")]
-    public sealed record HttpInputModel
+    public sealed record DeleteProductModel
     {
         [FromRoute(Name = "productId")]
         [Required]

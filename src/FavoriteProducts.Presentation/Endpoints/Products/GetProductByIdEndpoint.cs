@@ -12,7 +12,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Products;
 
 public sealed class GetProductByIdEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<GetProductByIdEndpoint.HttpInputModel>
+        .WithRequest<GetProductByIdEndpoint.GetProductByIdModel>
         .WithActionResult<ProductViewModel>
 {
     [HttpGet]    
@@ -26,7 +26,7 @@ public sealed class GetProductByIdEndpoint(ISender sender) :
     [ProducesResponseType(200, Type = typeof(ProductViewModel))]
     [ProducesResponseType(404)]
     public override Task<ActionResult<ProductViewModel>> HandleAsync(
-       HttpInputModel request,
+       GetProductByIdModel request,
        CancellationToken cancellationToken = default) =>
        sender
            .Send(new GetProductByIdQuery(request.ProductId), cancellationToken)
@@ -35,7 +35,7 @@ public sealed class GetProductByIdEndpoint(ISender sender) :
                _ => NotFound());
     
     [SwaggerSchema("The request model for the endpoint")]
-    public sealed record HttpInputModel
+    public sealed record GetProductByIdModel
     {
         [FromRoute(Name = "productId")]
         [Required]

@@ -14,7 +14,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Products;
 
 public sealed class CreateProductEndpoint(ISender sender) :
     EndpointBaseAsync
-    .WithRequest<CreateProductEndpoint.HttpInputModel>
+    .WithRequest<CreateProductEndpoint.CreateProductModel>
     .WithActionResult<ProductViewModel>
 {
     [HttpPost]
@@ -28,7 +28,7 @@ public sealed class CreateProductEndpoint(ISender sender) :
     [ProducesResponseType(201, Type = typeof(ProductViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<ProductViewModel>> HandleAsync(
-        [FromBody]HttpInputModel request,
+        [FromBody]CreateProductModel request,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new CreateProductCommand(
@@ -42,7 +42,7 @@ public sealed class CreateProductEndpoint(ISender sender) :
                 (_) => BadRequest());
 
     [SwaggerSchema("The request model for the create product endpoint")]
-    public sealed class HttpInputModel
+    public sealed class CreateProductModel
     {
         [SwaggerParameter("The product title"), FromBody, Required,
         StringLength(maximumLength: ProductTitle.MaxLength, MinimumLength = ProductTitle.MinLength)]

@@ -9,7 +9,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Customers.FavoriteProducts;
 
 public sealed class UnfavoriteProductEndpoint(ISender sender) :
     EndpointBaseAsync
-        .WithRequest<UnfavoriteProductEndpoint.HttpInputModel>
+        .WithRequest<UnfavoriteProductEndpoint.UnfavoriteProductModel>
         .WithoutResult
 {
     [HttpDelete]
@@ -23,7 +23,7 @@ public sealed class UnfavoriteProductEndpoint(ISender sender) :
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     public override Task<ActionResult> HandleAsync(
-        HttpInputModel request,
+        UnfavoriteProductModel request,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(
@@ -34,7 +34,7 @@ public sealed class UnfavoriteProductEndpoint(ISender sender) :
             .MatchAsync<ActionResult>(NoContent, BadRequest);
 
     [SwaggerSchema("The request model for the unfavorite product endpoint")]
-    public record HttpInputModel
+    public record UnfavoriteProductModel
     {
         [FromRoute(Name = "customerId")]
         [SwaggerParameter("The customer id")]

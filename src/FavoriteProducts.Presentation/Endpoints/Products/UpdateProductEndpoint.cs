@@ -15,7 +15,7 @@ namespace FavoriteProducts.Presentation.Endpoints.Products;
 
 public sealed class UpdateProductEndpoint(ISender sender) :
     EndpointBaseAsync
-    .WithRequest<UpdateProductEndpoint.HttpInputModel>
+    .WithRequest<UpdateProductEndpoint.UpdateProductModel>
     .WithActionResult<ProductViewModel>
 {
     [HttpPut]
@@ -29,7 +29,7 @@ public sealed class UpdateProductEndpoint(ISender sender) :
     [ProducesResponseType(200, Type = typeof(ProductViewModel))]
     [ProducesResponseType(400)]
     public override Task<ActionResult<ProductViewModel>> HandleAsync(
-        [FromBody]HttpInputModel httpInput,
+        [FromBody]UpdateProductModel httpInput,
         CancellationToken cancellationToken = default) =>
         sender
             .Send(new UpdateProductCommand(
@@ -46,7 +46,7 @@ public sealed class UpdateProductEndpoint(ISender sender) :
                 _ => BadRequest());
 
     [SwaggerSchema("The request model for the update product endpoint")]
-    public sealed record HttpInputModel
+    public sealed record UpdateProductModel
     {
         [Required]
         [SwaggerParameter("The product title")]
