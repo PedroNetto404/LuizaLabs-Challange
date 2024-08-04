@@ -14,30 +14,10 @@ public sealed class FavoriteProductDomainService(
     IRepository<Customer> customerRepository
 )
 {
-    public async Task<Result> ClearFavoritesAsync(Guid customerId, CancellationToken cancellationToken)
-    {
-        var customer = await customerRepository.GetByIdAsync(customerId, cancellationToken);
-        if (customer is null)
-        {
-            return DomainErrors.Customer.NotFound;
-        }
-
-        var favoriteProducts = await favoriteProductRepository.ListAsync(
-            new FavoriteProductsByCustomerSpecification(customerId),
-            cancellationToken);
-        if (favoriteProducts.Count != 0)
-        {
-            return Result.Ok();
-        }
-
-        await favoriteProductRepository.DeleteRangeAsync(favoriteProducts, cancellationToken);
-        return Result.Ok();
-    }
-
     public async Task<Result<FavoriteProduct>> FavoriteAsync(
-        Guid customerId,
-        Guid productId,
-        CancellationToken cancellationToken = default)
+     Guid customerId,
+     Guid productId,
+     CancellationToken cancellationToken = default)
     {
         var existingFavoriteProduct = await favoriteProductRepository.SingleOrDefaultAsync(
             new FavoriteProductByCustomerAndProductSpecification(
@@ -76,12 +56,32 @@ public sealed class FavoriteProductDomainService(
             : DomainErrors.FavoriteProduct.NotSaved;
     }
 
+    public async Task<Result> ClearFavoritesAsync(Guid customerId, CancellationToken cancellationToken)
+    {
+        var customer = await customerRepository.GetByIdAsync(customerId, cancellationToken);
+        if (customer is null)
+        {
+            return DomainErrors.Customer.NotFound;
+        }
+
+        var favoriteProducts = await favoriteProductRepository.ListAsync(
+            new FavoriteProductsByCustomerSpecification(customer.Id),
+            cancellationToken);
+        if (favoriteProducts.Count == 0)
+        {
+            return Result.Ok();
+        }
+
+        await favoriteProductRepository.DeleteRangeAsync(favoriteProducts, cancellationToken);
+        return Result.Ok();
+    }
+
     public async Task<Result> UnfavoriteAsync(
         Guid customerId,
         Guid productId,
         CancellationToken cancellationToken = default)
     {
-        var favoriteProduct = await favoriteProductRepository.FirstOrDefaultAsync(
+        var favoriteProduct = await favoriteProductRepository.SingleOrDefaultAsync(
             new FavoriteProductByCustomerAndProductSpecification(
                 customerId,
                 productId),
