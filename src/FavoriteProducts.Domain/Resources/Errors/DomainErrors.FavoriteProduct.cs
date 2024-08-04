@@ -11,5 +11,6 @@ public static partial class DomainErrors
         public static readonly DomainError<FavoriteProductEntity> CannotFavoriteInactiveProduct = new("cannot_favorite_inactive_product", "Cannot favorite inactive product.");
         public static readonly DomainError<FavoriteProductEntity> NotSaved = new("favorite_product_not_saved", "Favorite product not saved.");
         public static readonly DomainError<FavoriteProductEntity> NotDeleted = new("favorite_product_not_deleted", "Favorite product not deleted.");
+        public static readonly DomainError<FavoriteProductEntity> AlreadyFavorite = new("favorite_product_already_favorite", "Favorite product already favorited.");
     }
 }

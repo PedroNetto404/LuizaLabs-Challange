@@ -5,16 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FavoriteProducts.Presentation.Middlewares;
 
-public class GlobalExceptionHandler : IMiddleware
+public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         try
         {
+            logger.LogInformation("Call next middleware"); 
             await next(context);
+            logger.LogInformation("Request processed with sucess");
         }
         catch (Exception e)
         {
+            logger.LogError(e, "Request process error");
+            
             var details = e switch
             {
                 ValidationException validationException => new ProblemDetails

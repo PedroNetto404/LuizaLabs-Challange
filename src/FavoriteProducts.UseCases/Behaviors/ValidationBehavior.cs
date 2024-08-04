@@ -24,7 +24,6 @@ internal sealed class ValidationBehavior<TCommand, TResponse>(
         }
 
         var context = new ValidationContext<TCommand>(request);
-
         var validationErrors = await Task.WhenAll(
             validators.Select(v => v.ValidateAsync(context, cancellationToken))
         );
@@ -40,14 +39,6 @@ internal sealed class ValidationBehavior<TCommand, TResponse>(
             );
         }
 
-        var result = await next();
-        if (result.GetType().IsAssignableTo(typeof(IDomainError)) || result.IsOk)
-        {
-            return result;
-        }
-        
-        throw new ValidationException(
-            [new(result.Error.Code, result.Error.Message)]
-        );
+        return await next();
     }
 }

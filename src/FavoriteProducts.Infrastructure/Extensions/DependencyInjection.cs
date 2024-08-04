@@ -28,7 +28,7 @@ public static class DependencyInjection
         container.AddScoped<ICacheProvider, MemoryCacheProvider>();
         container.AddMemoryCache();
         container.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        container.AddTransient<DatabaseSeed>();
+        container.AddTransient<DatabaseSeeder>();
         
         return container;
     }

@@ -39,6 +39,16 @@ public sealed class FavoriteProductDomainService(
         Guid productId,
         CancellationToken cancellationToken = default)
     {
+        var existingFavoriteProduct = await favoriteProductRepository.SingleOrDefaultAsync(
+            new FavoriteProductByCustomerAndProductSpecification(
+                customerId,
+                productId),
+            cancellationToken);
+        if (existingFavoriteProduct is not null)
+        {
+            return DomainErrors.FavoriteProduct.AlreadyFavorite;
+        }
+
         var customer = await customerRepository.GetByIdAsync(customerId, cancellationToken);
         if (customer is null)
         {
@@ -55,7 +65,6 @@ public sealed class FavoriteProductDomainService(
         {
             return DomainErrors.FavoriteProduct.CannotFavoriteInactiveProduct;
         }
-
 
         var favoriteProduct = await favoriteProductRepository.AddAsync(
             new FavoriteProduct(

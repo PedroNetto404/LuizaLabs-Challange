@@ -9,14 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FavoriteProducts.Infrastructure.Data.Relational;
 
-public sealed class DatabaseSeed(FavoriteProductsContext context)
+public sealed class DatabaseSeeder(FavoriteProductsContext context)
 {
     public async Task SeedAsync()
     {
-        await context.Customers.IgnoreQueryFilters().ExecuteDeleteAsync();
-        await context.Products.IgnoreQueryFilters().ExecuteDeleteAsync();
-        await context.FavoriteProducts.IgnoreQueryFilters().ExecuteDeleteAsync();
-
         var customers = GenerateCustomers();
         var products = GenerateProducts();
 

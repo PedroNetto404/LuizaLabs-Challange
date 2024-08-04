@@ -38,9 +38,8 @@ public static class Pipeline
         using var scope = app.Services.CreateScope();
         var services = scope.ServiceProvider;
 
-        await services
-            .GetRequiredService<DatabaseSeed>()
-            .SeedAsync();
+        var databaseSeeder = services.GetRequiredService<DatabaseSeeder>();
+        await databaseSeeder.SeedAsync();
     }
 
     public static async Task ApplyMigrationAsync(this WebApplication app)
@@ -48,10 +47,12 @@ public static class Pipeline
         using var scope = app.Services.CreateScope();
         var services = scope.ServiceProvider;
 
-        var context = services
-            .GetRequiredService<FavoriteProductsContext>();
+        var database = 
+            services
+                .GetRequiredService<FavoriteProductsContext>()
+                .Database;
 
-        await context.Database.EnsureCreatedAsync();
-        await context.Database.MigrateAsync();
+        await database.EnsureCreatedAsync();
+        await database.MigrateAsync();
     }
 }

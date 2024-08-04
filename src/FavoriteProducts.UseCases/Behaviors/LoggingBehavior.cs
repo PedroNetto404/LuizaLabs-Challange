@@ -12,7 +12,10 @@ internal sealed class LoggingBehavior<TCommand, TResponse>(
     where TCommand : ICommandBase
     where TResponse : Result
 {
-    public async Task<TResponse> Handle(TCommand request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(
+        TCommand request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
         var commandName = request.GetType().Name;
 
@@ -21,11 +24,11 @@ internal sealed class LoggingBehavior<TCommand, TResponse>(
             logger.LogInformation("Handling command {CommandName}", commandName);
 
             var result = await next();
-            if(result.IsOk)
+            if (result.IsOk)
             {
                 logger.LogInformation("Command {CommandName} handled successfully", commandName);
             }
-            else 
+            else
             {
                 logger.LogWarning("Command {CommandName} failed with error {Error}", commandName, result.Error);
             }
