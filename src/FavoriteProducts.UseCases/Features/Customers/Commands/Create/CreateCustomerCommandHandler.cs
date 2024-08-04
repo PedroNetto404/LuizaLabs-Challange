@@ -10,8 +10,7 @@ using FavoriteProducts.UseCases.Features.Customers.Dtos;
 namespace FavoriteProducts.UseCases.Features.Customers.Commands.Create;
 
 internal sealed class CreateCustomerCommandHandler(
-    IRepository<Customer> customerRepository,
-    IUnitOfWork unitOfWork
+    IRepository<Customer> customerRepository
 ) : ICommandHandler<CreateCustomerCommand, CustomerDto>
 {
     public async Task<Result<CustomerDto>> Handle(
@@ -24,7 +23,7 @@ internal sealed class CreateCustomerCommandHandler(
             return maybeEmail.Error;
         }
 
-        var existingCustomer = await customerRepository.GetOneAsync(
+        var existingCustomer = await customerRepository.FirstOrDefaultAsync(
             new GetCustomerByEmailSpecification(email), 
             cancellationToken);
         if (existingCustomer is not null)
@@ -38,10 +37,9 @@ internal sealed class CreateCustomerCommandHandler(
             return maybeCustomerName.Error;
         }
 
-        var customer = new Customer(customerName, email);
-        await customerRepository.AddAsync(customer);
+        var customer = await customerRepository.AddAsync(new Customer(customerName, email), cancellationToken);
 
-        return await unitOfWork.CommitAsync(cancellationToken)
+        return customer is not null
         ? CustomerDto.FromEntity(customer)
         : DomainErrors.Customer.CreateCustomerFailed;
     }

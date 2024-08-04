@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "docker",
+                "pipeArgs": [
+                    "exec",
+                    "-i",
+                    "favorite-products-api"
+                ],
+                "debuggerPath": "/root/vsdbg/vsdbg",
+                "quoteArgs": true
+            },
+            "sourceFileMap": {
+                "/app/src": "${workspaceFolder}/src"
+            }
+        }
+    ]
+}

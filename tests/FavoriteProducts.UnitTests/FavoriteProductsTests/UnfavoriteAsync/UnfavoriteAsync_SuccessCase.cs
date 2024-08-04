@@ -21,16 +21,11 @@ public class UnfavoriteAsync_SuccessCase(
         favoriteProductsDomainServiceFixture
             .FavoriteProductsRepositoryMock
             .Setup(x => 
-                x.GetOneAsync(
+                x.FirstOrDefaultAsync(
                     It.IsAny<FavoriteProductByCustomerAndProductSpecification>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(favoriteProduct);
         
-        favoriteProductsDomainServiceFixture
-            .UnitOfWorkMock
-            .Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-
         //act
         var result = await favoriteProductsDomainServiceFixture
             .FavoriteProductDomainService

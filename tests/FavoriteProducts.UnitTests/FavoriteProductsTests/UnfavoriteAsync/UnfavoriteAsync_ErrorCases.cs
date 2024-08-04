@@ -10,7 +10,7 @@ namespace FavoriteProducts.UnitTests.FavoriteProductsTests.UnfavoriteAsync;
 
 public sealed class UnfavoriteAsync_ErrorCases(
     FavoriteProductBuilder favoriteProductBuilder,
-    FavoriteProductsDomainServiceFixture favoriteProductsDomainServiceFixture) : 
+    FavoriteProductsDomainServiceFixture favoriteProductsDomainServiceFixture) :
     IClassFixture<FavoriteProductsDomainServiceFixture>,
     IClassFixture<FavoriteProductBuilder>
 {
@@ -20,10 +20,10 @@ public sealed class UnfavoriteAsync_ErrorCases(
         //arrange
         favoriteProductsDomainServiceFixture
             .FavoriteProductsRepositoryMock
-            .Setup(x => 
-                x.GetOneAsync(
+            .Setup(x =>
+                x.FirstOrDefaultAsync(
                     It.IsAny<FavoriteProductByCustomerAndProductSpecification>(),
-                It.IsAny<CancellationToken>()))
+                    It.IsAny<CancellationToken>()))
             .ReturnsAsync((FavoriteProduct?)null);
 
         //act
@@ -44,20 +44,15 @@ public sealed class UnfavoriteAsync_ErrorCases(
 
         favoriteProductsDomainServiceFixture
             .FavoriteProductsRepositoryMock
-            .Setup(x => 
-                x.GetOneAsync(
+            .Setup(x =>
+                x.FirstOrDefaultAsync(
                     It.IsAny<FavoriteProductByCustomerAndProductSpecification>(),
-                It.IsAny<CancellationToken>()))
+                    It.IsAny<CancellationToken>()))
             .ReturnsAsync(favoriteProduct);
 
         favoriteProductsDomainServiceFixture
             .FavoriteProductsRepositoryMock
-            .Setup(x => x.DeleteAsync(favoriteProduct));
-
-        favoriteProductsDomainServiceFixture
-            .UnitOfWorkMock
-            .Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
+            .Setup(x => x.DeleteAsync(favoriteProduct, It.IsAny<CancellationToken>()));
 
         //act
         var result = await favoriteProductsDomainServiceFixture

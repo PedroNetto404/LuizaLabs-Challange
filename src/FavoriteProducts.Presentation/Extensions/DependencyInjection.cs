@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using FavoriteProducts.Presentation.Handlers;
+using FavoriteProducts.Presentation.Middlewares;
 using Microsoft.OpenApi.Models;
 
 namespace FavoriteProducts.Presentation.Extensions;
@@ -19,7 +19,7 @@ internal static class DependencyInjection
         });
         
         container.AddSwagger();
-        container.AddExceptionHandler<GlobalExceptionHandler>();
+        container.AddSingleton<GlobalExceptionHandler>();
         container.AddProblemDetails();
 
         return container;

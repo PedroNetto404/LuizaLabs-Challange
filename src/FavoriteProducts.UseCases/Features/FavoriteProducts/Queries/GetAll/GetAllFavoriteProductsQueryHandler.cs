@@ -15,7 +15,7 @@ public sealed class GetAllFavoriteProductsQueryHandler(
         GetAllFavoriteProductsQuery request, 
         CancellationToken cancellationToken)
     {
-        var favoriteProducts = await favoriteProductRepository.GetManyAsync(
+        var favoriteProducts = await favoriteProductRepository.ListAsync(
             new GetAllFavoriteProductsSpecification(
                 request.CustomerId, 
                 request.Page, 

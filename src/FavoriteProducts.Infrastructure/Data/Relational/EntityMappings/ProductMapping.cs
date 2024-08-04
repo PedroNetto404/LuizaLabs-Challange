@@ -55,10 +55,10 @@ public sealed class ProductMapping : AuditableEntityMapping<Product>
                 .HasAnnotation("MinValue", ProductPrice.MinValue)
                 .HasPrecision(18, 2);
 
-        builder.Property(x => x.Active)
-                .HasColumnName("active")
-                .IsRequired()
-                .HasDefaultValue(true);
+        builder
+            .Property(x => x.Active)
+            .HasColumnName("active")
+            .IsRequired();
 
         builder.Property(x => x.ImageUrl)
                 .HasColumnName("image_url")

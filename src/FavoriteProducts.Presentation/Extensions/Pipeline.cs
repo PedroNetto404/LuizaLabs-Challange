@@ -1,4 +1,5 @@
 ﻿using FavoriteProducts.Infrastructure.Data.Relational;
+using FavoriteProducts.Presentation.Middlewares;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ public static class Pipeline
 {
     public static WebApplication UsePipeline(this WebApplication app)
     {
-        app.UseExceptionHandler();
+        app.UseMiddleware<GlobalExceptionHandler>();
 
         if (app.Environment.IsDevelopment())
         {
@@ -32,21 +33,17 @@ public static class Pipeline
         return app;
     }
 
-    public static WebApplication SeedDatabaseIfDevelopment(this WebApplication app)
+    public static async Task SeedDatabaseAsync(this WebApplication app)
     {
-        if (!app.Environment.IsDevelopment()) return app;
         using var scope = app.Services.CreateScope();
         var services = scope.ServiceProvider;
-        
-        services
-            .GetRequiredService<DatabaseSeed>()
-            .SeedAsync()
-            .Wait();
 
-        return app;
+        await services
+            .GetRequiredService<DatabaseSeed>()
+            .SeedAsync();
     }
 
-    public static WebApplication ApplyMigration(this WebApplication app)
+    public static async Task ApplyMigrationAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
         var services = scope.ServiceProvider;
@@ -54,10 +51,7 @@ public static class Pipeline
         var context = services
             .GetRequiredService<FavoriteProductsContext>();
 
-        if (!context.Database.CanConnect()) return app;
-        
-        context.Database.Migrate();
-
-        return app;
+        await context.Database.EnsureCreatedAsync();
+        await context.Database.MigrateAsync();
     }
 }

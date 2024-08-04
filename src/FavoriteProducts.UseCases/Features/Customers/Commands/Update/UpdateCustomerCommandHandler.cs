@@ -8,8 +8,7 @@ using FavoriteProducts.UseCases.Features.Customers.Dtos;
 namespace FavoriteProducts.UseCases.Features.Customers.Commands.Update;
 
 public sealed class UpdateCustomerCommandHandler(
-    IRepository<Customer> repository,
-    IUnitOfWork unitOfWork
+    IRepository<Customer> repository
 ) : ICommandHandler<UpdateCustomerCommand, CustomerDto>
 {
     public async Task<Result<CustomerDto>> Handle(
@@ -34,9 +33,7 @@ public sealed class UpdateCustomerCommandHandler(
             return maybeUpdateName.Error;
         }
         
-        await repository.UpdateAsync(customer);
-        return await unitOfWork.CommitAsync(cancellationToken) 
-            ? CustomerDto.FromEntity(customer) 
-            : DomainErrors.Customer.UpdateFailed;
+        await repository.UpdateAsync(customer, cancellationToken);
+        return CustomerDto.FromEntity(customer);
     }
 }

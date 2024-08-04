@@ -15,7 +15,7 @@ public sealed class GetAllProductsQueryHandler(
         GetAllProductsQuery request, 
         CancellationToken cancellationToken) 
     {
-        var result = await repository.GetManyAsync(new GetAllProductsSpecification(
+        var result = await repository.ListAsync(new GetAllProductsSpecification(
             request.Page,
             request.PageSize,
             request.SortBy,

@@ -60,15 +60,10 @@ public class ClearFavorites_ErrorCases(
 
         favoriteProductsDomainServiceFixture
             .FavoriteProductsRepositoryMock
-            .Setup(x => x.GetManyAsync(
+            .Setup(x => x.ListAsync(
                 It.IsAny<FavoriteProductsByCustomerSpecification>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(favoriteProducts);
-
-        favoriteProductsDomainServiceFixture
-            .UnitOfWorkMock
-            .Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
 
         // Act
         var result = await favoriteProductsDomainServiceFixture

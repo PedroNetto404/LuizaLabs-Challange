@@ -15,7 +15,7 @@ internal sealed class GetAllCustomersQueryHandler(
         GetAllCustomersQuery request,
         CancellationToken cancellationToken)
     {
-        var customers = await customerRepository.GetManyAsync(
+        var customers = await customerRepository.ListAsync(
             new GetAllCustomersSpecification(
                 request.Page,
                 request.PageSize,

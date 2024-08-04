@@ -8,7 +8,7 @@ namespace FavoriteProducts.Infrastructure.Data.Relational;
 
 public sealed class FavoriteProductsContext(
     DbContextOptions<FavoriteProductsContext> options
-) : DbContext(options), IUnitOfWork
+) : DbContext(options)
 {
     public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
     public DbSet<Product> Products { get; set; }

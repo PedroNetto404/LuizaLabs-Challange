@@ -4,3 +4,4 @@ GET {{FavoriteProducts.Presentation_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+

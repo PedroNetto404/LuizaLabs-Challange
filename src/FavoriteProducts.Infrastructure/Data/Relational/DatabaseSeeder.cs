@@ -9,35 +9,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FavoriteProducts.Infrastructure.Data.Relational;
 
-public sealed class DatabaseSeed(FavoriteProductsContext context) : IDisposable
+public sealed class DatabaseSeed(FavoriteProductsContext context)
 {
-    public void Dispose()
-    {
-        // ReSharper disable once GCSuppressFinalizeForTypeWithoutDestructor
-        GC.SuppressFinalize(this);
-    }
-
     public async Task SeedAsync()
     {
-        if (await context.Database.CanConnectAsync() is false) return;
-
-        context.Customers.RemoveRange(context.Customers);
-        context.Products.RemoveRange(context.Products);
-        context.FavoriteProducts.RemoveRange(context.FavoriteProducts);
+        await context.Customers.IgnoreQueryFilters().ExecuteDeleteAsync();
+        await context.Products.IgnoreQueryFilters().ExecuteDeleteAsync();
+        await context.FavoriteProducts.IgnoreQueryFilters().ExecuteDeleteAsync();
 
         var customers = GenerateCustomers();
         var products = GenerateProducts();
 
         await context.Customers.AddRangeAsync(customers);
         await context.Products.AddRangeAsync(products);
+
         await context.FavoriteProducts.AddRangeAsync(
-            customers.SelectMany(customer => 
+            customers.SelectMany(customer =>
                 products.OrderBy(_ => Guid.NewGuid())
                         .Take(10)
                         .ToList()
                         .Select(product => new FavoriteProduct(
-                            customer.Id, 
-                            product.Id, 
+                            customer.Id,
+                            product.Id,
                             product.Title.Value))));
 
         await context.SaveChangesAsync();

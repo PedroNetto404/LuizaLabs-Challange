@@ -35,11 +35,6 @@ public sealed class FavoriteAsync_SuccessCase(
             .Setup(x => x.GetByIdAsync(product.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
-        _favoriteProductsDomainServiceFixture
-            .UnitOfWorkMock
-            .Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-        
         // Act
         var result = await _favoriteProductsDomainServiceFixture.FavoriteProductDomainService.FavoriteAsync(customer.Id, product.Id);
 

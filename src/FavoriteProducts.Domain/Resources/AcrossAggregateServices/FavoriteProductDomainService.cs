@@ -11,8 +11,7 @@ namespace FavoriteProducts.Domain.Resources.AcrossAggregateServices;
 public sealed class FavoriteProductDomainService(
     IRepository<FavoriteProduct> favoriteProductRepository,
     IRepository<Product> productRepository,
-    IRepository<Customer> customerRepository,
-    IUnitOfWork unitOfWork
+    IRepository<Customer> customerRepository
 )
 {
     public async Task<Result> ClearFavoritesAsync(Guid customerId, CancellationToken cancellationToken)
@@ -23,7 +22,7 @@ public sealed class FavoriteProductDomainService(
             return DomainErrors.Customer.NotFound;
         }
 
-        var favoriteProducts = await favoriteProductRepository.GetManyAsync(
+        var favoriteProducts = await favoriteProductRepository.ListAsync(
             new FavoriteProductsByCustomerSpecification(customerId),
             cancellationToken);
         if (favoriteProducts.Count != 0)
@@ -31,11 +30,8 @@ public sealed class FavoriteProductDomainService(
             return Result.Ok();
         }
 
-        await favoriteProductRepository.BulkDeleteAsync(favoriteProducts);
-
-        return await unitOfWork.CommitAsync(cancellationToken)
-            ? Result.Ok()
-            : DomainErrors.FavoriteProduct.NotDeleted;
+        await favoriteProductRepository.DeleteRangeAsync(favoriteProducts, cancellationToken);
+        return Result.Ok();
     }
 
     public async Task<Result<FavoriteProduct>> FavoriteAsync(
@@ -60,14 +56,14 @@ public sealed class FavoriteProductDomainService(
             return DomainErrors.FavoriteProduct.CannotFavoriteInactiveProduct;
         }
 
-        var favoriteProduct = new FavoriteProduct(
+
+        var favoriteProduct = await favoriteProductRepository.AddAsync(
+            new FavoriteProduct(
             customer.Id,
             product.Id,
-            product.Title.Value);
-
-        await favoriteProductRepository.AddAsync(favoriteProduct);
-        return await unitOfWork.CommitAsync(cancellationToken) is true
-            ? favoriteProduct
+            product.Title.Value), cancellationToken);
+        return favoriteProduct is not null
+            ? Result.Ok(favoriteProduct)
             : DomainErrors.FavoriteProduct.NotSaved;
     }
 
@@ -76,7 +72,7 @@ public sealed class FavoriteProductDomainService(
         Guid productId,
         CancellationToken cancellationToken = default)
     {
-        var favoriteProduct = await favoriteProductRepository.GetOneAsync(
+        var favoriteProduct = await favoriteProductRepository.FirstOrDefaultAsync(
             new FavoriteProductByCustomerAndProductSpecification(
                 customerId,
                 productId),
@@ -86,9 +82,7 @@ public sealed class FavoriteProductDomainService(
             return DomainErrors.FavoriteProduct.NotFound;
         }
 
-        await favoriteProductRepository.DeleteAsync(favoriteProduct);
-        return await unitOfWork.CommitAsync(cancellationToken) is true
-            ? Result.Ok()
-            : DomainErrors.FavoriteProduct.NotDeleted;
+        await favoriteProductRepository.DeleteAsync(favoriteProduct, cancellationToken);
+        return Result.Ok();
     }
 }

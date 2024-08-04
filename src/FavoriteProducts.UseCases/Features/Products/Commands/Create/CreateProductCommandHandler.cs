@@ -9,8 +9,7 @@ using FavoriteProducts.UseCases.Features.Products.Dtos;
 namespace FavoriteProducts.UseCases.Features.Products.Commands.Create;
 
 public sealed class CreateProductCommandHandler(
-    IRepository<Product> productRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<CreateProductCommand, ProductDto>
+    IRepository<Product> productRepository) : ICommandHandler<CreateProductCommand, ProductDto>
 {
     public async Task<Result<ProductDto>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
@@ -40,10 +39,8 @@ public sealed class CreateProductCommandHandler(
             return maybeProduct.Error;
         }
 
-        await productRepository.AddAsync(maybeProduct.Value);
-        return await unitOfWork.CommitAsync(cancellationToken) is true
-            ? ProductDto.FromEntity(maybeProduct.Value)
-            : DomainErrors.Product.CreateProductFailed;
+        var product = await productRepository.AddAsync(maybeProduct.Value, cancellationToken);
+        return ProductDto.FromEntity(product);
     }
 
     private static Result<(ProductTitle, ProductBrand, ProductDescription, ProductPrice, ProductReviewScore)>

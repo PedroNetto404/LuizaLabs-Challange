@@ -7,23 +7,22 @@ using Serilog;
 SetupLogger();
 
 var builder = WebApplication.CreateBuilder(args);
-{
-    var services = builder.Services;
-
-    services
-        .AddInfrastructureServices(builder.Configuration)
-        .AddPresentationServices()
-        .AddDomainServices()
-        .AddUseCasesServices();
-}
+builder
+    .Services
+    .AddInfrastructureServices(builder.Configuration)
+    .AddPresentationServices()
+    .AddDomainServices()
+    .AddUseCasesServices();
 
 var app = builder.Build();
 
 app.UsePipeline();
 
-app
-    .ApplyMigration()
-    .SeedDatabaseIfDevelopment();
+await app.ApplyMigrationAsync();
+if (app.Environment.IsDevelopment())
+{
+    await app.SeedDatabaseAsync();
+}
 
 try
 {
@@ -38,6 +37,8 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+return;
 
 static void SetupLogger() => Log.Logger =
     new LoggerConfiguration()

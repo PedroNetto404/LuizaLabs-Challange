@@ -7,8 +7,7 @@ using FavoriteProducts.UseCases.Abstractions;
 namespace FavoriteProducts.UseCases.Features.Products.Commands.Delete;
 
 public sealed class DeleteProductCommandHandler(
-    IRepository<Product> productRepository,
-    IUnitOfWork unitOfWork
+    IRepository<Product> productRepository
 ) : ICommandHandler<DeleteProductCommand>
 {
     public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
@@ -19,9 +18,7 @@ public sealed class DeleteProductCommandHandler(
             return DomainErrors.Product.NotFound;
         }
 
-        await productRepository.DeleteAsync(product);
-        return await unitOfWork.CommitAsync(cancellationToken) is true
-            ? Result.Ok()
-            : DomainErrors.Product.DeleteProductFailed;
+        await productRepository.DeleteAsync(product, cancellationToken);
+        return Result.Ok();
     }
 }

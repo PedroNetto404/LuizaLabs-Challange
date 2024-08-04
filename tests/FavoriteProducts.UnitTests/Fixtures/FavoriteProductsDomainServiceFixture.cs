@@ -12,7 +12,6 @@ public class FavoriteProductsDomainServiceFixture
     public Mock<IRepository<Customer>> CustomerRepositoryMock { get; set; }
     public Mock<IRepository<Product>> ProductRepositoryMock { get; set; }
     public Mock<IRepository<FavoriteProduct>> FavoriteProductsRepositoryMock { get; set; }
-    public Mock<IUnitOfWork> UnitOfWorkMock { get; set; }
     public FavoriteProductDomainService FavoriteProductDomainService { get; set; }
 
     public FavoriteProductsDomainServiceFixture()
@@ -20,11 +19,9 @@ public class FavoriteProductsDomainServiceFixture
         FavoriteProductsRepositoryMock = new Mock<IRepository<FavoriteProduct>>();
         ProductRepositoryMock = new Mock<IRepository<Product>>();
         CustomerRepositoryMock = new Mock<IRepository<Customer>>();
-        UnitOfWorkMock = new Mock<IUnitOfWork>();
         FavoriteProductDomainService = new FavoriteProductDomainService(
             FavoriteProductsRepositoryMock.Object,
             ProductRepositoryMock.Object,
-            CustomerRepositoryMock.Object,
-            UnitOfWorkMock.Object);
+            CustomerRepositoryMock.Object);
     }
 }

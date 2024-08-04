@@ -8,8 +8,7 @@ using FavoriteProducts.UseCases.Features.Products.Dtos;
 namespace FavoriteProducts.UseCases.Features.Products.Commands.Update;
 
 public sealed class UpdateProductCommandHandler(
-    IRepository<Product> productRepository,
-    IUnitOfWork unitOfWork
+    IRepository<Product> productRepository
 ) : ICommandHandler<UpdateProductCommand, ProductDto>
 {
     public async Task<Result<ProductDto>> Handle(
@@ -58,9 +57,7 @@ public sealed class UpdateProductCommandHandler(
             return Error.MultipleErrors(maybeErrors);
         }
 
-        await productRepository.UpdateAsync(product);
-        return await unitOfWork.CommitAsync(cancellationToken)
-            ? ProductDto.FromEntity(product)
-            : DomainErrors.Product.UpdateProductFailed;
+        await productRepository.UpdateAsync(product, cancellationToken);
+        return ProductDto.FromEntity(product);
     }
 }

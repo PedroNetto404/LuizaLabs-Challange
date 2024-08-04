@@ -110,11 +110,6 @@ public class FavoriteAsync_ErrorCase(
             .Setup(x => x.GetByIdAsync(product.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
-        favoriteProductsDomainServiceFixture
-            .UnitOfWorkMock
-            .Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-
         // Act
         var result = await favoriteProductsDomainServiceFixture
             .FavoriteProductDomainService

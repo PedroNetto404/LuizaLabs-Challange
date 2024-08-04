@@ -5,6 +5,7 @@ using FavoriteProducts.UseCases.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace FavoriteProducts.Infrastructure.Extensions;
 
@@ -20,13 +21,15 @@ public static class DependencyInjection
                 configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(FavoriteProductsContext).Assembly.FullName)
             );
+            
+            options.LogTo(message => Log.ForContext<FavoriteProductsContext>().Information(message));
         });
 
         container.AddScoped<ICacheProvider, MemoryCacheProvider>();
         container.AddMemoryCache();
         container.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        container.AddTransient<IUnitOfWork>(provider => provider.GetRequiredService<FavoriteProductsContext>());
         container.AddTransient<DatabaseSeed>();
+        
         return container;
     }
 }

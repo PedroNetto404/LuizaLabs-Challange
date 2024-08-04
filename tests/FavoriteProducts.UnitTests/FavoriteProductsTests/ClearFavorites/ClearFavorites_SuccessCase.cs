@@ -38,16 +38,11 @@ public class ClearFavorites_SuccessCase(
 
         favoriteProductsDomainServiceFixture
             .FavoriteProductsRepositoryMock
-            .Setup(x => x.GetManyAsync(
+            .Setup(x => x.ListAsync(
                 It.IsAny<FavoriteProductsByCustomerSpecification>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(favoriteProducts);
         
-        favoriteProductsDomainServiceFixture
-            .UnitOfWorkMock
-            .Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-
         // Act
         var result = await favoriteProductsDomainServiceFixture
             .FavoriteProductDomainService
