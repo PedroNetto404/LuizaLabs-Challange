@@ -38,7 +38,8 @@ public sealed class Product : Entity, IAuditableEntity
 
         return new Product(title, description, price, brand, reviewScore, imageUrl)
         {
-            DeletedAtUtc = null
+            DeletedAtUtc = null,
+            Active = true
         };
     }
 
@@ -48,7 +49,7 @@ public sealed class Product : Entity, IAuditableEntity
     public ProductBrand Brand { get; private set; }
     public ProductReviewScore ReviewScore { get; private set; }
     public string ImageUrl { get; private set; }
-    public bool Active { get; private set; }
+    public bool Active { get; private set; } = true;
     public DateTime CreatedAtUtc { get; } = DateTime.UtcNow;
     public DateTime ModifiedAtUtc { get; set; } = DateTime.UtcNow;
     public DateTime? DeletedAtUtc { get; set; } = DateTime.UtcNow;

@@ -26,18 +26,16 @@ public sealed class FavoriteProductDomainService(
         var favoriteProducts = await favoriteProductRepository.GetManyAsync(
             new FavoriteProductsByCustomerSpecification(customerId),
             cancellationToken);
-        if (favoriteProducts.Any() is false)
+        if (favoriteProducts.Count != 0)
         {
             return Result.Ok();
         }
 
-        await Task.WhenAll(
-            favoriteProducts.Select(favoriteProductRepository.DeleteAsync)
-        );
+        await favoriteProductRepository.BulkDeleteAsync(favoriteProducts);
 
-        return await unitOfWork.CommitAsync(cancellationToken) is true ?
-            Result.Ok() :
-            DomainErrors.FavoriteProduct.NotDeleted;
+        return await unitOfWork.CommitAsync(cancellationToken)
+            ? Result.Ok()
+            : DomainErrors.FavoriteProduct.NotDeleted;
     }
 
     public async Task<Result<FavoriteProduct>> FavoriteAsync(
@@ -63,14 +61,14 @@ public sealed class FavoriteProductDomainService(
         }
 
         var favoriteProduct = new FavoriteProduct(
-            customer.Id, 
+            customer.Id,
             product.Id,
             product.Title.Value);
 
         await favoriteProductRepository.AddAsync(favoriteProduct);
-        return await unitOfWork.CommitAsync(cancellationToken) is true 
-        ? favoriteProduct 
-        : DomainErrors.FavoriteProduct.NotSaved;
+        return await unitOfWork.CommitAsync(cancellationToken) is true
+            ? favoriteProduct
+            : DomainErrors.FavoriteProduct.NotSaved;
     }
 
     public async Task<Result> UnfavoriteAsync(
@@ -89,8 +87,8 @@ public sealed class FavoriteProductDomainService(
         }
 
         await favoriteProductRepository.DeleteAsync(favoriteProduct);
-        return await unitOfWork.CommitAsync(cancellationToken) is true ?
-            Result.Ok() :
-            DomainErrors.FavoriteProduct.NotDeleted;
+        return await unitOfWork.CommitAsync(cancellationToken) is true
+            ? Result.Ok()
+            : DomainErrors.FavoriteProduct.NotDeleted;
     }
 }
