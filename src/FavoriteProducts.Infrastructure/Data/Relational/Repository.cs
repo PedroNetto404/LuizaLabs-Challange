@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FavoriteProducts.Infrastructure.Data.Relational;
 
-internal sealed class Repository<TEntity>(FavoriteProductsContext context) : IRepository<TEntity> where TEntity : class, IEntity
+internal sealed class Repository<TEntity>(FavoriteProductsContext context)
+    : IRepository<TEntity> where TEntity : class, IEntity
 {
     private readonly DbSet<TEntity> entities = context.Set<TEntity>();
     private readonly SpecificationEvaluator evaluator = SpecificationEvaluator.Default;
@@ -24,11 +25,17 @@ internal sealed class Repository<TEntity>(FavoriteProductsContext context) : IRe
     }
 
     public Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
-        entities.FindAsync([id], cancellationToken).AsTask();
+        entities
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
-    public Task<TEntity?> GetOneAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default) =>
-        evaluator.GetQuery(entities.AsQueryable(), specification)
-                 .FirstOrDefaultAsync(cancellationToken);
+
+    public Task<TEntity?> GetOneAsync(ISpecification<TEntity> specification,
+        CancellationToken cancellationToken = default) =>
+        evaluator
+            .GetQuery(entities.AsQueryable(), specification)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(cancellationToken);
 
     public Task AddAsync(TEntity entity)
     {
@@ -44,8 +51,14 @@ internal sealed class Repository<TEntity>(FavoriteProductsContext context) : IRe
             auditableEntity.OnDelete();
             return UpdateAsync(entity);
         }
-        
+
         entities.Remove(entity);
+        return Task.CompletedTask;
+    }
+
+    public Task BulkDeleteAsync(IEnumerable<TEntity> toDelete)
+    {
+        entities.RemoveRange(toDelete);
         return Task.CompletedTask;
     }
 
@@ -55,7 +68,7 @@ internal sealed class Repository<TEntity>(FavoriteProductsContext context) : IRe
         {
             auditableEntity.OnModify();
         }
-        
+
         entities.Update(entity);
         return Task.CompletedTask;
     }

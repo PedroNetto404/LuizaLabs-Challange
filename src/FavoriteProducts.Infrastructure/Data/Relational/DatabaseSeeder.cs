@@ -20,7 +20,7 @@ public sealed class DatabaseSeed(FavoriteProductsContext context) : IDisposable
     public async Task SeedAsync()
     {
         if (await context.Database.CanConnectAsync() is false) return;
-        
+
         context.Customers.RemoveRange(context.Customers);
         context.Products.RemoveRange(context.Products);
         context.FavoriteProducts.RemoveRange(context.FavoriteProducts);
@@ -30,25 +30,15 @@ public sealed class DatabaseSeed(FavoriteProductsContext context) : IDisposable
 
         await context.Customers.AddRangeAsync(customers);
         await context.Products.AddRangeAsync(products);
-
-        foreach (var customer in customers)
-        {
-            var favoriteProducts = products
-                .OrderBy(_ => Guid.NewGuid())
-                .Take(10)
-                .Select(p =>
-                {
-                    var favorite = new FavoriteProduct(customer.Id, p.Id, p.Title.Value)
-                    {
-                        DeletedAtUtc = null
-                    };
-
-                    return favorite;
-                });
-
-
-            await context.FavoriteProducts.AddRangeAsync(favoriteProducts);
-        }
+        await context.FavoriteProducts.AddRangeAsync(
+            customers.SelectMany(customer => 
+                products.OrderBy(_ => Guid.NewGuid())
+                        .Take(10)
+                        .ToList()
+                        .Select(product => new FavoriteProduct(
+                            customer.Id, 
+                            product.Id, 
+                            product.Title.Value))));
 
         await context.SaveChangesAsync();
     }
@@ -81,7 +71,10 @@ public sealed class DatabaseSeed(FavoriteProductsContext context) : IDisposable
                 var reviewScore = ProductReviewScore.Create(f.Random.Int(1, 5)).Value;
                 var imageUrl = f.Internet.Url();
 
-                return Product.Create(title, description, price, brand, reviewScore, imageUrl).Value;
+                var product = Product.Create(title, description, price, brand, reviewScore, imageUrl).Value;
+                product.Activate();
+
+                return product;
             });
 
         return productFaker.Generate(10);
