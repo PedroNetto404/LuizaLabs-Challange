@@ -1,4 +1,5 @@
 using FavoriteProducts.Domain.Extensions;
+using FavoriteProducts.Infrastructure.Data.Relational;
 using FavoriteProducts.Infrastructure.Extensions;
 using FavoriteProducts.Presentation.Extensions;
 using FavoriteProducts.UseCases.Extensions;
@@ -17,12 +18,7 @@ builder
 var app = builder.Build();
 
 app.UsePipeline();
-
-await app.ApplyMigrationAsync();
-if (app.Environment.IsDevelopment())
-{
-    await app.SeedDatabaseAsync();
-}
+await app.SetupDatabaseAsync();
 
 try
 {

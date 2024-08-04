@@ -1,5 +1,7 @@
 using FavoriteProducts.Domain.Resources.Customers;
 using FavoriteProducts.Domain.Resources.Errors;
+using FavoriteProducts.Domain.Resources.FavoriteProducts;
+using FavoriteProducts.Domain.Resources.FavoriteProducts.Specifications;
 using FavoriteProducts.Domain.Resources.Products;
 using FavoriteProducts.UnitTests.Builders;
 using FavoriteProducts.UnitTests.Fixtures;
@@ -8,18 +10,51 @@ using Moq;
 
 namespace FavoriteProducts.UnitTests.FavoriteProductsTests.FavoriteAsync;
 
-public class FavoriteAsync_ErrorCase(
+public sealed class FavoriteAsync_ErrorCase(
     FavoriteProductsDomainServiceFixture favoriteProductsDomainServiceFixture,
     ProductBuilder productBuilder,
     CustomerBuilder customerBuilder
-) : 
+) :
     IClassFixture<FavoriteProductsDomainServiceFixture>,
     IClassFixture<FavoriteProductBuilder>,
     IClassFixture<ProductBuilder>,
     IClassFixture<CustomerBuilder>
 {
-    [Fact]    
-    public async Task FavoriteAsync_ShouldReturnProductNotFound_WhenProductNotExists(){
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
+    public async Task FavoriteAsync_ShouldReturnsFailure_WhenProductAlreadyFavorited()
+    {
+        // Arrange
+        var customer = customerBuilder.Build();
+        var product = productBuilder.WithStatus(true).Build();
+
+        favoriteProductsDomainServiceFixture
+            .CustomerRepositoryMock
+            .Setup(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(customer);
+
+        favoriteProductsDomainServiceFixture
+            .ProductRepositoryMock
+            .Setup(x => x.GetByIdAsync(product.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(product);
+
+        favoriteProductsDomainServiceFixture
+            .FavoriteProductsRepositoryMock
+            .Setup(x => x.SingleOrDefaultAsync(It.IsAny<FavoriteProductByCustomerAndProductSpecification>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new FavoriteProduct(customer.Id, product.Id, product.Title.Value));
+
+        // Act
+        var result = await favoriteProductsDomainServiceFixture
+            .FavoriteProductDomainService
+            .FavoriteAsync(customer.Id, product.Id);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(DomainErrors.FavoriteProduct.AlreadyFavorite);
+    }
+
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
+    public async Task FavoriteAsync_ShouldReturnProductNotFound_WhenProductNotExists()
+    {
         // Arrange
         var customer = customerBuilder.Build();
 
@@ -33,6 +68,11 @@ public class FavoriteAsync_ErrorCase(
             .Setup(x => x.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Product?)null);
 
+        favoriteProductsDomainServiceFixture
+            .FavoriteProductsRepositoryMock
+            .Setup(x => x.SingleOrDefaultAsync(It.IsAny<FavoriteProductByCustomerAndProductSpecification>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((FavoriteProduct?)null);
+
         // Act
         var result = await favoriteProductsDomainServiceFixture
             .FavoriteProductDomainService
@@ -43,8 +83,9 @@ public class FavoriteAsync_ErrorCase(
         result.Error.Should().Be(DomainErrors.Product.NotFound);
     }
 
-    [Fact]
-    public async Task FavoriteAsync_ShouldReturnCustomerNotFound_WhenCustomerNotExists(){
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
+    public async Task FavoriteAsync_ShouldReturnCustomerNotFound_WhenCustomerNotExists()
+    {
         // Arrange
         var product = productBuilder.WithStatus(true).Build();
 
@@ -58,6 +99,11 @@ public class FavoriteAsync_ErrorCase(
             .Setup(x => x.GetByIdAsync(product.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
+        favoriteProductsDomainServiceFixture
+            .FavoriteProductsRepositoryMock
+            .Setup(x => x.SingleOrDefaultAsync(It.IsAny<FavoriteProductByCustomerAndProductSpecification>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((FavoriteProduct?)null);
+
         // Act
         var result = await favoriteProductsDomainServiceFixture
             .FavoriteProductDomainService
@@ -68,8 +114,9 @@ public class FavoriteAsync_ErrorCase(
         result.Error.Should().Be(DomainErrors.Customer.NotFound);
     }
 
-    [Fact]
-    public async Task FavoriteAsync_ShouldReturnsError_WhenProductIsInactive(){
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
+    public async Task FavoriteAsync_ShouldReturnsError_WhenProductIsInactive()
+    {
         // Arrange
         var customer = customerBuilder.Build();
         var product = productBuilder.WithStatus(false).Build();
@@ -84,6 +131,11 @@ public class FavoriteAsync_ErrorCase(
             .Setup(x => x.GetByIdAsync(product.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
+        favoriteProductsDomainServiceFixture
+            .FavoriteProductsRepositoryMock
+            .Setup(x => x.SingleOrDefaultAsync(It.IsAny<FavoriteProductByCustomerAndProductSpecification>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((FavoriteProduct?)null);
+
         // Act
         var result = await favoriteProductsDomainServiceFixture
             .FavoriteProductDomainService
@@ -94,8 +146,9 @@ public class FavoriteAsync_ErrorCase(
         result.Error.Should().Be(DomainErrors.FavoriteProduct.CannotFavoriteInactiveProduct);
     }
 
-    [Fact]
-    public async Task FavoriteAsync_ShouldReturnsError_WhenCommitFailed(){
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
+    public async Task FavoriteAsync_ShouldReturnsError_WhenCommitFailed()
+    {
         // Arrange
         var customer = customerBuilder.Build();
         var product = productBuilder.WithStatus(true).Build();
@@ -109,6 +162,11 @@ public class FavoriteAsync_ErrorCase(
             .ProductRepositoryMock
             .Setup(x => x.GetByIdAsync(product.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
+
+        favoriteProductsDomainServiceFixture
+            .FavoriteProductsRepositoryMock
+            .Setup(x => x.SingleOrDefaultAsync(It.IsAny<FavoriteProductByCustomerAndProductSpecification>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((FavoriteProduct?)null);
 
         // Act
         var result = await favoriteProductsDomainServiceFixture

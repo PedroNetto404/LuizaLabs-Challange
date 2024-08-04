@@ -11,17 +11,21 @@ namespace FavoriteProducts.Infrastructure.Extensions;
 
 public static class DependencyInjection
 {
+
     public static IServiceCollection AddInfrastructureServices(
-        this IServiceCollection container, 
+        this IServiceCollection container,
         IConfiguration configuration)
     {
-        container.AddDbContext<FavoriteProductsContext>(options =>
+        _ = container.AddDbContext<FavoriteProductsContext>(options =>
         {
+            var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string not found");
+            Log.ForContext<FavoriteProductsContext>().Information("Connection string: {ConnectionString}", connectionString);
+
             options.UseNpgsql(
-                configuration.GetConnectionString("DefaultConnection"),
+                connectionString,
                 b => b.MigrationsAssembly(typeof(FavoriteProductsContext).Assembly.FullName)
             );
-            
+
             options.LogTo(message => Log.ForContext<FavoriteProductsContext>().Information(message));
         });
 
@@ -29,7 +33,7 @@ public static class DependencyInjection
         container.AddMemoryCache();
         container.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         container.AddTransient<DatabaseSeeder>();
-        
+
         return container;
     }
 }

@@ -1,3 +1,5 @@
+using FavoriteProducts.Domain.Resources.FavoriteProducts;
+using FavoriteProducts.Domain.Resources.FavoriteProducts.Specifications;
 using FavoriteProducts.UnitTests.Builders;
 using FavoriteProducts.UnitTests.Fixtures;
 using FluentAssertions;
@@ -18,7 +20,7 @@ public sealed class FavoriteAsync_SuccessCase(
     private readonly ProductBuilder _productBuilder = productBuilder;
     private readonly CustomerBuilder _customerBuilder = customerBuilder;
 
-    [Fact]
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
     public async Task FavoriteAsync_ShouldFavoriteProduct_WhenAllValidState()
     {
         // Arrange
@@ -34,6 +36,11 @@ public sealed class FavoriteAsync_SuccessCase(
             .ProductRepositoryMock
             .Setup(x => x.GetByIdAsync(product.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
+
+        _favoriteProductsDomainServiceFixture
+            .FavoriteProductsRepositoryMock
+            .Setup(x => x.SingleOrDefaultAsync(It.IsAny<FavoriteProductByCustomerAndProductSpecification>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((FavoriteProduct?)null);
 
         // Act
         var result = await _favoriteProductsDomainServiceFixture.FavoriteProductDomainService.FavoriteAsync(customer.Id, product.Id);

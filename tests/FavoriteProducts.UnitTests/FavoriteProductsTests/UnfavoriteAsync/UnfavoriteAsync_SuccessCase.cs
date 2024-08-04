@@ -12,7 +12,7 @@ public class UnfavoriteAsync_SuccessCase(
     IClassFixture<FavoriteProductsDomainServiceFixture>,
     IClassFixture<FavoriteProductBuilder>
 {
-    [Fact]
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
     public async Task UnfavoriteAsync_ShouldUnfavoriteProduct_WhenValidState()
     {
         //arrange

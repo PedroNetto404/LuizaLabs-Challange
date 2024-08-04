@@ -14,7 +14,7 @@ public sealed class UnfavoriteAsync_ErrorCases(
     IClassFixture<FavoriteProductsDomainServiceFixture>,
     IClassFixture<FavoriteProductBuilder>
 {
-    [Fact]
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
     public async Task UnfavoriteAsync_ShouldReturnFavoriteProductNotFound_WhenFavoriteProductNotExists()
     {
         //arrange
@@ -36,7 +36,7 @@ public sealed class UnfavoriteAsync_ErrorCases(
         result.Error.Should().Be(DomainErrors.FavoriteProduct.NotFound);
     }
 
-    [Fact]
+    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
     public async Task UnfavoriteAsync_ShouldReturnFavoriteProductNotDeleted_WhenFavoriteProductNotDeleted()
     {
         //arrange
