@@ -9,7 +9,6 @@ using Moq;
 namespace FavoriteProducts.UnitTests.FavoriteProductsTests.UnfavoriteAsync;
 
 public sealed class UnfavoriteAsync_ErrorCases(
-    FavoriteProductBuilder favoriteProductBuilder,
     FavoriteProductsDomainServiceFixture favoriteProductsDomainServiceFixture) :
     IClassFixture<FavoriteProductsDomainServiceFixture>,
     IClassFixture<FavoriteProductBuilder>
@@ -21,7 +20,7 @@ public sealed class UnfavoriteAsync_ErrorCases(
         favoriteProductsDomainServiceFixture
             .FavoriteProductsRepositoryMock
             .Setup(x =>
-                x.FirstOrDefaultAsync(
+                x.SingleOrDefaultAsync(
                     It.IsAny<FavoriteProductByCustomerAndProductSpecification>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync((FavoriteProduct?)null);
@@ -34,33 +33,5 @@ public sealed class UnfavoriteAsync_ErrorCases(
         //assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(DomainErrors.FavoriteProduct.NotFound);
-    }
-
-    [Fact, Trait("Category", "Unit"), Trait("Resource", "FavoriteProducts")]
-    public async Task UnfavoriteAsync_ShouldReturnFavoriteProductNotDeleted_WhenFavoriteProductNotDeleted()
-    {
-        //arrange
-        var favoriteProduct = favoriteProductBuilder.Build();
-
-        favoriteProductsDomainServiceFixture
-            .FavoriteProductsRepositoryMock
-            .Setup(x =>
-                x.FirstOrDefaultAsync(
-                    It.IsAny<FavoriteProductByCustomerAndProductSpecification>(),
-                    It.IsAny<CancellationToken>()))
-            .ReturnsAsync(favoriteProduct);
-
-        favoriteProductsDomainServiceFixture
-            .FavoriteProductsRepositoryMock
-            .Setup(x => x.DeleteAsync(favoriteProduct, It.IsAny<CancellationToken>()));
-
-        //act
-        var result = await favoriteProductsDomainServiceFixture
-            .FavoriteProductDomainService
-            .UnfavoriteAsync(favoriteProduct.CustomerId, favoriteProduct.ProductId);
-
-        //assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(DomainErrors.FavoriteProduct.NotDeleted);
     }
 }

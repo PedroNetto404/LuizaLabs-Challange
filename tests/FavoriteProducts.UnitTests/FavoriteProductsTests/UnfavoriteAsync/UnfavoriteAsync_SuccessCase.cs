@@ -21,7 +21,7 @@ public class UnfavoriteAsync_SuccessCase(
         favoriteProductsDomainServiceFixture
             .FavoriteProductsRepositoryMock
             .Setup(x => 
-                x.FirstOrDefaultAsync(
+                x.SingleOrDefaultAsync(
                     It.IsAny<FavoriteProductByCustomerAndProductSpecification>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(favoriteProduct);

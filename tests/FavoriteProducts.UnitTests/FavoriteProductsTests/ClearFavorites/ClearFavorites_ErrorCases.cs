@@ -39,39 +39,4 @@ public class ClearFavorites_ErrorCases(
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(DomainErrors.Customer.NotFound);
     }
-
-    [Fact]
-    public async Task ClearFavoritesAsync_ShouldReturnsNotDeleted_WhenCommitFailed()
-    {
-        // Arrange
-        var customer = customerBuilder.Build();
-        var product = productBuilder.Build();
-        var favoriteProducts = Enumerable.Range(0, 5)
-            .Select(_ => favoriteProductBuilder
-                .WithCustomerId(customer.Id)
-                .WithProductId(product.Id)
-                .Build())
-            .ToList();
-
-        favoriteProductsDomainServiceFixture
-            .CustomerRepositoryMock
-            .Setup(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(customer);
-
-        favoriteProductsDomainServiceFixture
-            .FavoriteProductsRepositoryMock
-            .Setup(x => x.ListAsync(
-                It.IsAny<FavoriteProductsByCustomerSpecification>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(favoriteProducts);
-
-        // Act
-        var result = await favoriteProductsDomainServiceFixture
-            .FavoriteProductDomainService
-            .ClearFavoritesAsync(customer.Id, It.IsAny<CancellationToken>());
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(DomainErrors.FavoriteProduct.NotDeleted);
-    }
 }

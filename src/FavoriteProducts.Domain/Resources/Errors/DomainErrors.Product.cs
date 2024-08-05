@@ -19,5 +19,6 @@ public static partial class DomainErrors
         public static readonly DomainError<ProductEntity> DeleteProductFailed = new("delete_product_failed", "Failed to delete product.");
         public static readonly DomainError<ProductEntity> InvalidProductReviewScore = new("invalid_product_review_score", "Product can't have invalid review score");
         public static readonly DomainError<ProductEntity> CannotDecreaseReviewScore = new("cannot_decrease_review_score", "Product review score can't be decreased");
+        public static readonly DomainError<ProductEntity> AlreadyExists = new("product_already_exists", "Product already exists.");
     }
 }

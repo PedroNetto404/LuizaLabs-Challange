@@ -10,7 +10,7 @@ public sealed class ProductMapping : AuditableEntityMapping<Product>
     public override void Configure(EntityTypeBuilder<Product> builder)
     {
         base.Configure(builder);
-        
+
         builder.ToTable("products");
 
         builder.Property(x => x.Title)
@@ -23,7 +23,10 @@ public sealed class ProductMapping : AuditableEntityMapping<Product>
                 )
                 .HasAnnotation("MaxLength", ProductTitle.MaxLength)
                 .HasAnnotation("MinLength", ProductTitle.MinLength);
-        
+
+        builder.HasIndex(x => x.Title)
+                .IsUnique();
+
         builder.Property(p => p.ReviewScore)
                 .HasColumnName("review_score")
                 .IsRequired()

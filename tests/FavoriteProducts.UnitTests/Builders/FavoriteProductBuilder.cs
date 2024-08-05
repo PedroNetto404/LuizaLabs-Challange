@@ -24,7 +24,17 @@ public sealed class FavoriteProductBuilder
 
     public FavoriteProduct Build()
     {
-        var favoriteProduct = new FavoriteProduct(_customerId, _productId, _productTitle);
+        var favoriteProduct = new FavoriteProduct(
+            _customerId, 
+            _productId, 
+            _productTitle);
+
         return favoriteProduct;
+    }
+
+    public FavoriteProductBuilder WithProductTitle(string value)
+    {
+        _productTitle = value;
+        return this;
     }
 }
