@@ -1,5 +1,6 @@
 using FavoriteProducts.Domain.Core.Abstractions;
 using FavoriteProducts.Domain.Core.Results;
+using FavoriteProducts.Domain.Resources.Errors;
 using FavoriteProducts.Domain.Resources.Products;
 using FavoriteProducts.Domain.Resources.Products.Specifications;
 using FavoriteProducts.Domain.Resources.Products.ValueObjects;
@@ -33,7 +34,11 @@ public sealed class CreateProductCommandHandler(
 
         var existingProduct = await productRepository.SingleOrDefaultAsync(
             new GetProductByTitleSpecification(maybeTitle.Value), cancellationToken);
-            
+        if(existingProduct is not null)
+        {
+            return DomainErrors.Product.AlreadyExists;
+        }
+
         var maybeProduct = Product.Create(
             maybeTitle.Value,
             maybeDescription.Value,
